@@ -11,7 +11,7 @@ const Contact = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         {/* Contact Info */}
-        <div className="bg-blue-50 p-6 rounded-lg shadow-md flex flex-col space-y-4">
+        <div className="bg-blue-50 p-6 rounded-lg text-center shadow-md flex flex-col space-y-4">
           <h3 className="text-2xl font-semibold text-blue-700 mb-4">Get in Touch</h3>
           <div className="flex items-center space-x-3 text-gray-700">
             <Mail size={24} className="text-blue-600" />
@@ -37,7 +37,7 @@ const Contact = () => {
                 type="text"
                 id="contactName"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                placeholder="John Doe"
+                placeholder="Input Your Name"
               />
             </div>
             <div>
@@ -46,7 +46,7 @@ const Contact = () => {
                 type="email"
                 id="contactEmail"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                placeholder="john.doe@example.com"
+                placeholder="yourmail@example.com"
               />
             </div>
             <div>

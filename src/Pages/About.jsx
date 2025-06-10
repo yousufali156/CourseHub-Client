@@ -12,9 +12,9 @@ const About = () => {
         transition={{ duration: 0.8 }}
         className="mb-12 bg-white p-8 rounded-lg shadow-xl border border-gray-200 text-center"
       >
-        <h1 className="text-4xl font-bold text-blue-700 mb-6">About CourseSphere</h1>
+        <h1 className="text-4xl font-bold text-blue-700 mb-6">About CourseHub</h1>
         <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
-          CourseSphere is a leading online learning platform dedicated to providing high-quality educational content to students and professionals worldwide. Our mission is to democratize education, making it accessible and affordable for everyone, regardless of their location or background.
+          CourseHub is a leading online learning platform dedicated to providing high-quality educational content to students and professionals worldwide. Our mission is to democratize education, making it accessible and affordable for everyone, regardless of their location or background.
         </p>
         <p className="text-lg text-gray-700 leading-relaxed mt-4 max-w-3xl mx-auto">
           We offer a diverse range of courses, from technology and business to creative arts and personal development, all taught by industry experts and experienced educators. Our interactive learning environment, practical projects, and supportive community ensure a rewarding learning experience for all our users.
