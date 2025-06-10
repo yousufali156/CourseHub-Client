@@ -99,9 +99,9 @@ const Hero = () => {
                     </div>
                 )}
             </section>
-                <section>
-                    <Courses/>
-                </section>
+            <section>
+                <Courses />
+            </section>
             {/* Popular Courses */}
             <section className="mb-12">
                 <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">Popular Courses</h2>
@@ -140,7 +140,7 @@ const Hero = () => {
 
             {/* Why Choose Section */}
             <section className="mb-12 bg-blue-700 text-white p-8 rounded-lg shadow-xl">
-                <h2 className="text-4xl font-bold text-center mb-6">Why Choose CourseSphere?</h2>
+                <h2 className="text-4xl font-bold text-center mb-6">Why Choose CourseHub?</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -185,15 +185,17 @@ const Hero = () => {
                     Connect with fellow learners, share knowledge, and grow together in a supportive environment.
                 </p>
                 <div className="flex justify-center">
-                    <motion.button
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.5 }}
-                        transition={{ duration: 0.5 }}
-                        className="bg-yellow-400 text-blue-800 hover:bg-yellow-300 px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition duration-300"
-                    >
-                        Sign Up Today!
-                    </motion.button>
+                    <Link to="/register">
+                        <motion.button
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.5 }}
+                            transition={{ duration: 0.5 }}
+                            className="bg-yellow-400 text-blue-800 hover:bg-yellow-300 px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition duration-300"
+                        >
+                            Sign Up Today!
+                        </motion.button>
+                    </Link>
                 </div>
             </section>
         </div>
