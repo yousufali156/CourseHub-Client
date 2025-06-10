@@ -229,3 +229,83 @@ const CourseDetailsPage = () => {
 };
 
 export default CourseDetailsPage;
+
+
+
+
+// import React from 'react';
+// import { useParams, Link } from 'react-router';
+
+// const sampleCourses = [
+//   {
+//     id: "web-dev",
+//     title: "Web Development",
+//     date: "15 Jan. 2025",
+//     image: "https://i.ibb.co/d0tW8vZF/Web-Development.jpg",
+//     instructor: "Jane Doe",
+//     description: "Learn to build responsive websites with HTML, CSS, and JavaScript.",
+//     duration: "6 weeks",
+//     seats: 25,
+//     overview: "This course teaches the fundamentals of modern web development, including HTML, CSS, JavaScript, and deployment practices."
+//   },
+//   // Add more objects to simulate actual data
+// ];
+
+// const CourseDetailsPage = () => {
+//   const { id } = useParams();
+//   const course = sampleCourses.find(course => course.id === id);
+
+//   if (!course) {
+//     return (
+//       <div className="p-10 text-center">
+//         <h1 className="text-2xl font-bold text-red-600">Course not found</h1>
+//         <Link to="/courses" className="text-blue-600 hover:underline">Go back to courses</Link>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl border border-gray-200">
+//       <div className="flex flex-col lg:flex-row gap-8">
+//         {/* Image Section */}
+//         <div className="lg:w-1/2">
+//           <img
+//             src={course.image}
+//             alt={course.title}
+//             className="rounded-lg shadow-md w-full h-auto object-cover max-h-[400px]"
+//           />
+//         </div>
+
+//         {/* Details Section */}
+//         <div className="lg:w-1/2 flex flex-col justify-between">
+//           <div>
+//             <h1 className="text-3xl font-extrabold text-blue-800 mb-4">{course.title}</h1>
+//             <p className="text-gray-700 mb-4">{course.description}</p>
+//             <div className="grid grid-cols-2 gap-4 text-gray-800 mb-6">
+//               <p><strong>Duration:</strong> {course.duration}</p>
+//               <p><strong>Instructor:</strong> {course.instructor}</p>
+//               <p><strong>Date:</strong> {course.date}</p>
+//               <p><strong>Seats Available:</strong> {course.seats}</p>
+//             </div>
+
+//             <h2 className="text-xl font-bold text-gray-800 mb-3">Course Overview</h2>
+//             <p className="text-gray-700 leading-relaxed">
+//               {course.overview}
+//             </p>
+//           </div>
+
+//           <div className="mt-6">
+//             <Link
+//               to="/courses"
+//               className="inline-block mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700"
+//             >
+//               Back to Courses
+//             </Link>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CourseDetailsPage;
