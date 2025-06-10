@@ -1,17 +1,56 @@
-import {  } from 'react'
+import React from 'react';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  createRoutesFromElements,
+  Outlet,
+} from 'react-router';
 
-import './App.css'
+// Components & Pages
+import Navbar from './Components/Navbar/Navbar';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import Courses from './pages/Courses';
+import AddCourse from './pages/AddCourse';
+import ManageCourse from './pages/ManageCourse';
+import MyEnrolledCourses from './pages/MyEnrolledCourses';
+import Contact from './pages/Contact';
+import About from './pages/About';
+import Login from './Pages/Login/Login';
+import Register from './Pages/Register/Register'; 
+import NotFoundCourse from './Components/NotFoundCourse';
 
-function App() {
-  
+// Layout wrapper with Navbar and Footer
+const AppLayout = () => (
+  <div className="min-h-screen flex flex-col">
+    <Navbar />
+    <main className="flex-grow">
+      <Outlet />
+    </main>
+    <Footer />
+  </div>
+);
 
-  return (
-    <>
-      
-      <h1>Vite + React</h1>
-      
-    </>
-  )
-}
+const App = () => {
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/add-course" element={<AddCourse />} />
+        <Route path="/manage-course" element={<ManageCourse />} />
+        <Route path="/my-enrolled-courses" element={<MyEnrolledCourses />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFoundCourse />} />
+      </Route>
+    )
+  );
 
-export default App
+  return <RouterProvider router={router} />;
+};
+
+export default App;
