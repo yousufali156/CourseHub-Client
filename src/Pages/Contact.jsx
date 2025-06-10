@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, MapPin } from 'react-feather'; // or 'lucide-react' if you use that
+import { Mail, Phone, MapPin } from 'react-feather'; 
 
 const Contact = () => {
   return (
@@ -15,15 +15,15 @@ const Contact = () => {
           <h3 className="text-2xl font-semibold text-blue-700 mb-4">Get in Touch</h3>
           <div className="flex items-center space-x-3 text-gray-700">
             <Mail size={24} className="text-blue-600" />
-            <a href="mailto:info@coursesphere.com" className="hover:underline">info@coursesphere.com</a>
+            <a href="mailto:info@coursesphere.com" className="hover:underline">info@CourseHub.com</a>
           </div>
           <div className="flex items-center space-x-3 text-gray-700">
             <Phone size={24} className="text-blue-600" />
-            <a href="tel:+1234567890" className="hover:underline">+1 (234) 567-890</a>
+            <a href="tel:+1234567890" className="hover:underline">+880 1 (234) 567-890</a>
           </div>
           <div className="flex items-start space-x-3 text-gray-700">
             <MapPin size={24} className="text-blue-600 mt-1" />
-            <span>123 Learning Lane, Knowledge City, KS 12345, USA</span>
+            <span>5800 Bogura 7 Matha, Bogura Sadar, Rajshahi, Bangladesh</span>
           </div>
         </div>
 
