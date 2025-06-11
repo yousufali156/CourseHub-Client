@@ -1,58 +1,72 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faGithub,
+  faCodepen,
+  faFreeCodeCamp,
+  faDev,
+  faReact,
+  faVuejs,
+  faAngular,
+  faNodeJs,
+  faWordpress,
+  faAws,
+  faDocker,
+  faAndroid,
+} from '@fortawesome/free-brands-svg-icons';
 
 const icons = [
-  'fab fa-github',
-  'fab fa-codepen',
-  'fab fa-free-code-camp',
-  'fab fa-dev',
-  'fab fa-react',
-  'fab fa-vuejs',
-  'fab fa-angular',
-  'fab fa-node',
-  'fab fa-wordpress',
-  'fab fa-aws',
-  'fab fa-docker',
-  'fab fa-android',
+  faAndroid,
+  faGithub,
+  faCodepen,
+  faFreeCodeCamp,
+  faDev,
+  faReact,
+  faVuejs,
+  faAngular,
+  faNodeJs,
+  faWordpress,
+  faAws,
+  faDocker,
 ];
 
 const ContactMarquee = () => {
-  useEffect(() => {
-    const root = document.documentElement;
-    const displayed = getComputedStyle(root).getPropertyValue('--marquee-elements-displayed');
-    const content = document.querySelector('ul.marquee-content');
+  const marqueeRef = useRef(null);
 
-    root.style.setProperty('--marquee-elements', content.children.length);
+  useEffect(() => {
+    const marquee = marqueeRef.current;
+    const displayed = window.innerWidth < 640 ? 3 : 6;
+
+    marquee.style.setProperty('--marquee-elements-displayed', displayed);
+    marquee.style.setProperty('--marquee-elements', icons.length);
 
     for (let i = 0; i < displayed; i++) {
-      content.appendChild(content.children[i].cloneNode(true));
+      const clone = marquee.children[i].cloneNode(true);
+      marquee.appendChild(clone);
     }
   }, []);
 
   return (
-    <div
-      className="w-full md:w-[80vw] h-[16vh] md:h-[20vh] bg-black text-white overflow-hidden relative mx-auto my-10"
-      style={{
-        '--marquee-elements-displayed': '3',
-        '--marquee-element-width': 'calc(100vw / 3)',
-        '--marquee-animation-duration': `calc(var(--marquee-elements) * 3s)`,
-      }}
-    >
-      {/* Gradient overlays */}
-      <div className="absolute top-0 left-0 w-20 md:w-40 h-full z-10 bg-gradient-to-r from-black to-transparent" />
-      <div className="absolute top-0 right-0 w-20 md:w-40 h-full z-10 bg-gradient-to-l from-black to-transparent" />
+    <div className="w-full bg-black overflow-hidden relative h-[100px]">
+      {/* gradient edges */}
+      <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-black to-transparent z-10" />
+      <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-black to-transparent z-10" />
 
       <ul
-        className="marquee-content list-none h-full flex animate-[scrolling_linear_infinite]"
+        ref={marqueeRef}
+        className="flex h-full items-center gap-12 animate-marquee"
         style={{
-          animationDuration: 'calc(var(--marquee-elements) * 3s)',
+          '--marquee-elements-displayed': 6,
+          '--marquee-elements': icons.length,
+          '--marquee-animation-duration': `${icons.length * 2}s`,
         }}
       >
         {icons.map((icon, index) => (
           <li
             key={index}
-            className="flex justify-center items-center shrink-0 w-[calc(100vw/3)] md:w-[calc(80vw/5)] text-[12vh] md:text-[15vh]"
+            className="min-w-[80px] text-4xl text-white text-center animate-colorChange"
           >
-            <i className={icon}></i>
+            <FontAwesomeIcon icon={icon} />
           </li>
         ))}
       </ul>
