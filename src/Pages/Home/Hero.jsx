@@ -8,7 +8,6 @@ import AuthContext from '../../FirebaseAuthContext/AuthContext';
 
 // import LoadingSpinner from '../../Components/LoadingSpinner';
 
-import Banner from './Banner';
 import Courses from '../Courses';
 
 const Hero = () => {
@@ -62,7 +61,7 @@ const Hero = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <Banner />
+           
 
             {/* Latest Courses */}
             <section className="mt-12 mb-12">

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Mail, Phone, MapPin } from 'react-feather'; 
+import { Mail, Phone, MapPin } from 'react-feather';
+import ContactMarquee from './ContactMarquee';
 
 const Contact = () => {
   return (
@@ -66,6 +67,9 @@ const Contact = () => {
             </button>
           </form>
         </div>
+      </div>
+      <div>
+        <ContactMarquee />
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router';
-import {doc,getDoc,collection,query,where,getDocs,addDoc,updateDoc,deleteDoc,} from 'firebase/firestore';
+import {
+  doc, getDoc, collection, query, where,
+  getDocs, addDoc, updateDoc, deleteDoc
+} from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
-
-// import LoadingSpinner from '../Components/LoadingSpinner';
-
 import NotFoundCourse from '../Components/NotFoundCourse';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
 
@@ -27,39 +27,43 @@ const CourseDetailsPage = () => {
 
   const fetchCourseDetails = async () => {
     if (!db) return;
+
     try {
       setPageLoading(true);
-      const courseDocRef = doc(db, courseDocPath, id);
-      const courseSnap = await getDoc(courseDocRef);
+      const courseRef = doc(db, courseDocPath, id);
+      const courseSnap = await getDoc(courseRef);
 
-      if (courseSnap.exists()) {
-        const data = { id: courseSnap.id, ...courseSnap.data() };
-        setCourse(data);
-        setSeatsLeft(data.seats || 0);
-
-        if (user) {
-          const enrollmentQuery = query(
-            collection(db, userEnrollmentsPath),
-            where("courseId", "==", id),
-            where("userEmail", "==", user.email)
-          );
-          const enrollmentSnapshot = await getDocs(enrollmentQuery);
-          setIsEnrolled(!enrollmentSnapshot.empty);
-
-          const totalEnrollmentsQuery = query(
-            collection(db, userEnrollmentsPath),
-            where("userEmail", "==", user.email)
-          );
-          const totalSnapshot = await getDocs(totalEnrollmentsQuery);
-          setUserEnrollmentsCount(totalSnapshot.size);
-        }
-      } else {
+      if (!courseSnap.exists()) {
         toast.error("Course not found!");
         navigate('/404');
+        return;
+      }
+
+      const courseData = { id: courseSnap.id, ...courseSnap.data() };
+      setCourse(courseData);
+      setSeatsLeft(courseData.seats || 0);
+
+      if (user) {
+        const userEnrollmentsRef = collection(db, userEnrollmentsPath);
+
+        const courseEnrollmentQuery = query(
+          userEnrollmentsRef,
+          where("courseId", "==", id),
+          where("userEmail", "==", user.email)
+        );
+        const courseEnrollmentSnap = await getDocs(courseEnrollmentQuery);
+        setIsEnrolled(!courseEnrollmentSnap.empty);
+
+        const totalEnrollmentsQuery = query(
+          userEnrollmentsRef,
+          where("userEmail", "==", user.email)
+        );
+        const totalEnrollmentsSnap = await getDocs(totalEnrollmentsQuery);
+        setUserEnrollmentsCount(totalEnrollmentsSnap.size);
       }
     } catch (error) {
-      console.error("Error loading course:", error);
-      toast.error("Failed to load course details.");
+      console.error("Error fetching course details:", error);
+      toast.error("Failed to load course.");
     } finally {
       setPageLoading(false);
     }
@@ -69,7 +73,7 @@ const CourseDetailsPage = () => {
     if (!authLoading && db) {
       fetchCourseDetails();
     }
-  }, [id, user, authLoading, db, userId]);
+  }, [id, user, authLoading, db]);
 
   const handleEnrollment = async () => {
     if (!user) {
@@ -77,29 +81,30 @@ const CourseDetailsPage = () => {
       navigate('/login', { state: { from: location } });
       return;
     }
-    if (!course) return;
 
+    if (!course || !db) return;
     setEnrollmentLoading(true);
 
-    try {
-      const courseRef = doc(db, courseDocPath, id);
+    const courseRef = doc(db, courseDocPath, id);
+    const userEnrollmentsRef = collection(db, userEnrollmentsPath);
 
+    try {
       if (isEnrolled) {
-        const querySnap = await getDocs(query(
-          collection(db, userEnrollmentsPath),
+        const existingQuery = query(
+          userEnrollmentsRef,
           where("courseId", "==", id),
           where("userEmail", "==", user.email)
-        ));
+        );
+        const snap = await getDocs(existingQuery);
 
-        if (!querySnap.empty) {
-          const docToDelete = querySnap.docs[0];
-          await deleteDoc(doc(db, userEnrollmentsPath, docToDelete.id));
+        if (!snap.empty) {
+          await deleteDoc(doc(db, userEnrollmentsPath, snap.docs[0].id));
           await updateDoc(courseRef, { seats: seatsLeft + 1 });
 
           setSeatsLeft(prev => prev + 1);
           setIsEnrolled(false);
           setUserEnrollmentsCount(prev => prev - 1);
-          toast.success(`Enrollment removed from "${course.courseTitle}".`);
+          toast.success(`Removed enrollment from "${course.courseTitle}"`);
         }
       } else {
         if (seatsLeft <= 0) {
@@ -107,17 +112,17 @@ const CourseDetailsPage = () => {
           return;
         }
         if (userEnrollmentsCount >= 3) {
-          toast.error("Limit: 3 courses per user.");
+          toast.error("You can only enroll in 3 courses.");
           return;
         }
 
-        await addDoc(collection(db, userEnrollmentsPath), {
+        await addDoc(userEnrollmentsRef, {
           courseId: id,
           courseTitle: course.courseTitle,
           userEmail: user.email,
-          enrollmentDate: new Date().toISOString(),
           courseImage: course.imageURL,
           courseDuration: course.duration,
+          enrollmentDate: new Date().toISOString()
         });
 
         await updateDoc(courseRef, { seats: seatsLeft - 1 });
@@ -125,24 +130,23 @@ const CourseDetailsPage = () => {
         setSeatsLeft(prev => prev - 1);
         setIsEnrolled(true);
         setUserEnrollmentsCount(prev => prev + 1);
-        toast.success(`Enrolled in "${course.courseTitle}".`);
+        toast.success(`Successfully enrolled in "${course.courseTitle}"`);
       }
     } catch (error) {
-      console.error("Enrollment error:", error);
-      toast.error("Enrollment failed.");
+      console.error("Enrollment failed:", error);
+      toast.error("Enrollment action failed.");
     } finally {
       setEnrollmentLoading(false);
       fetchCourseDetails();
     }
   };
 
-  if (pageLoading || authLoading) return ;
+  if (pageLoading || authLoading) return null;
   if (!course) return <NotFoundCourse />;
 
   return (
     <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl border border-gray-200">
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Image */}
         <div className="lg:w-1/2">
           <img
             src={course.imageURL || "https://placehold.co/600x400/ECECEC/000000?text=Course+Image"}
@@ -155,7 +159,6 @@ const CourseDetailsPage = () => {
           />
         </div>
 
-        {/* Details */}
         <div className="lg:w-1/2 flex flex-col justify-between">
           <div>
             <h1 className="text-4xl font-extrabold text-blue-800 mb-4">{course.courseTitle}</h1>
@@ -173,7 +176,6 @@ const CourseDetailsPage = () => {
             <p className="text-gray-700 leading-relaxed">{course.fullDescription || "No overview available."}</p>
           </div>
 
-          {/* Enroll */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-between bg-blue-50 p-6 rounded-lg shadow-inner">
             <div className="text-center sm:text-left mb-4 sm:mb-0">
               {seatsLeft > 0 ? (
@@ -184,13 +186,14 @@ const CourseDetailsPage = () => {
                 <p className="text-red-600 font-bold text-xl">No seats left!</p>
               )}
             </div>
+
             <button
               onClick={handleEnrollment}
               className={`px-8 py-3 rounded-full font-bold text-xl transition duration-300 shadow-md
                 ${enrollmentLoading ? 'bg-gray-400 cursor-not-allowed' : ''}
                 ${isEnrolled
                   ? 'bg-red-600 text-white hover:bg-red-700'
-                  : (seatsLeft <= 0 || !user || userEnrollmentsCount >= 3)
+                  : (seatsLeft <= 0 || !user || (userEnrollmentsCount >= 3 && !isEnrolled))
                     ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
                     : 'bg-green-600 text-white hover:bg-green-700'
                 }
@@ -203,14 +206,13 @@ const CourseDetailsPage = () => {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               ) : (
-                <>
-                  {isEnrolled ? "Remove Enrollment" :
-                    seatsLeft <= 0 ? "No Seats Left" :
-                      userEnrollmentsCount >= 3 ? "Limit Reached" :
-                        "Enroll Now"}
-                </>
+                isEnrolled ? "Remove Enrollment"
+                : seatsLeft <= 0 ? "No Seats Left"
+                : userEnrollmentsCount >= 3 ? "Limit Reached"
+                : "Enroll Now"
               )}
             </button>
+
             {!user && (
               <p className="text-sm text-gray-500 mt-2 text-center sm:text-right">
                 Please login to enroll.
@@ -218,7 +220,7 @@ const CourseDetailsPage = () => {
             )}
             {user && userEnrollmentsCount >= 3 && !isEnrolled && (
               <p className="text-sm text-red-500 mt-2 text-center sm:text-right">
-                You've enrolled in 3 courses. Remove one to enroll again.
+                You’ve enrolled in 3 courses. Remove one to enroll again.
               </p>
             )}
           </div>
@@ -229,83 +231,3 @@ const CourseDetailsPage = () => {
 };
 
 export default CourseDetailsPage;
-
-
-
-
-// import React from 'react';
-// import { useParams, Link } from 'react-router';
-
-// const sampleCourses = [
-//   {
-//     id: "web-dev",
-//     title: "Web Development",
-//     date: "15 Jan. 2025",
-//     image: "https://i.ibb.co/d0tW8vZF/Web-Development.jpg",
-//     instructor: "Jane Doe",
-//     description: "Learn to build responsive websites with HTML, CSS, and JavaScript.",
-//     duration: "6 weeks",
-//     seats: 25,
-//     overview: "This course teaches the fundamentals of modern web development, including HTML, CSS, JavaScript, and deployment practices."
-//   },
-//   // Add more objects to simulate actual data
-// ];
-
-// const CourseDetailsPage = () => {
-//   const { id } = useParams();
-//   const course = sampleCourses.find(course => course.id === id);
-
-//   if (!course) {
-//     return (
-//       <div className="p-10 text-center">
-//         <h1 className="text-2xl font-bold text-red-600">Course not found</h1>
-//         <Link to="/courses" className="text-blue-600 hover:underline">Go back to courses</Link>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl border border-gray-200">
-//       <div className="flex flex-col lg:flex-row gap-8">
-//         {/* Image Section */}
-//         <div className="lg:w-1/2">
-//           <img
-//             src={course.image}
-//             alt={course.title}
-//             className="rounded-lg shadow-md w-full h-auto object-cover max-h-[400px]"
-//           />
-//         </div>
-
-//         {/* Details Section */}
-//         <div className="lg:w-1/2 flex flex-col justify-between">
-//           <div>
-//             <h1 className="text-3xl font-extrabold text-blue-800 mb-4">{course.title}</h1>
-//             <p className="text-gray-700 mb-4">{course.description}</p>
-//             <div className="grid grid-cols-2 gap-4 text-gray-800 mb-6">
-//               <p><strong>Duration:</strong> {course.duration}</p>
-//               <p><strong>Instructor:</strong> {course.instructor}</p>
-//               <p><strong>Date:</strong> {course.date}</p>
-//               <p><strong>Seats Available:</strong> {course.seats}</p>
-//             </div>
-
-//             <h2 className="text-xl font-bold text-gray-800 mb-3">Course Overview</h2>
-//             <p className="text-gray-700 leading-relaxed">
-//               {course.overview}
-//             </p>
-//           </div>
-
-//           <div className="mt-6">
-//             <Link
-//               to="/courses"
-//               className="inline-block mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700"
-//             >
-//               Back to Courses
-//             </Link>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CourseDetailsPage;
