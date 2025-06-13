@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import AuthContext from '../../FirebaseAuthContext/AuthContext';
 
 const Navbar = () => {
-  const { user, signOutUser, loading } = useContext(AuthContext); 
+  const { user, signOutUser, loading } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,6 +13,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await signOutUser();
+      localStorage.removeItem('access-token'); // ✅ Remove JWT on logout
       toast.success('Logged out successfully!');
       navigate('/login');
     } catch (error) {
@@ -34,6 +35,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="text-white text-2xl font-bold">
           Course<span className="text-yellow-300">Hub</span>
+          
         </Link>
 
         {/* Hamburger */}
@@ -75,6 +77,7 @@ const Navbar = () => {
           {user ? (
             <div className="relative group">
               <img
+                title={user.displayName || user.email} // Tooltip
                 src={
                   user.photoURL ||
                   `https://placehold.co/40x40/FFD700/000000?text=${user.displayName?.charAt(0) || 'U'}`
@@ -124,7 +127,10 @@ const Navbar = () => {
 
             {user ? (
               <button
-                onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                onClick={() => {
+                  handleLogout();
+                  setIsMobileMenuOpen(false);
+                }}
                 className="w-full text-left text-red-300 hover:bg-blue-600 px-4 py-2 flex items-center gap-2 rounded"
               >
                 <LogOut size={18} /> Logout ({user.displayName || user.email})

@@ -1,3 +1,4 @@
+// src/App.jsx
 import React from 'react';
 import {
   createBrowserRouter,
@@ -5,8 +6,7 @@ import {
   Route,
   createRoutesFromElements,
   Outlet,
-} from 'react-router';
-
+} from 'react-router'; 
 // Components & Pages
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './components/Footer';
@@ -18,11 +18,11 @@ import MyEnrolledCourses from './pages/MyEnrolledCourses';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import Login from './Pages/Login/Login';
-import Register from './Pages/Register/Register'; 
+import Register from './Pages/Register/Register';
 import NotFoundCourse from './Components/NotFoundCourse';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 
-// Layout wrapper with Navbar and Footer
+// Layout wrapper
 const AppLayout = () => (
   <div className="min-h-screen flex flex-col">
     <Navbar />
@@ -44,9 +44,7 @@ const App = () => {
         <Route path="/add-course" element={<AddCourse />} />
         <Route path="/manage-course" element={<ManageCourse />} />
         <Route path="/my-enrolled-courses" element={<MyEnrolledCourses />} />
-        <Route path="/Course-Details-Page" element={<CourseDetailsPage />} />
         <Route path="/course-details/:id" element={<CourseDetailsPage />} />
-
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<NotFoundCourse />} />

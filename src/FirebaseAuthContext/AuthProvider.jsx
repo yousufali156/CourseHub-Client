@@ -1,60 +1,72 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
 } from 'firebase/auth';
-
-import { auth } from '../Firebase/Firebase.init';
+import { auth, db } from '../Firebase/Firebase.init';
 import AuthContext from './AuthContext';
 import LoadingSpinner from '../Components/LoadingSpinner';
 
-const AuthProvider = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
-  // Create new user
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const createUser = (email, password) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password)
-      .finally(() => setLoading(false));
+    return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  // Sign in existing user
   const signInUser = (email, password) => {
     setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password)
-      .finally(() => setLoading(false));
+    return signInWithEmailAndPassword(auth, email, password);
   };
 
-  // Sign out user
+  const signInWithGoogle = () => {
+    setLoading(true);
+    return signInWithPopup(auth, googleProvider);
+  };
+
+  const signInWithGithub = () => {
+    setLoading(true);
+    return signInWithPopup(auth, githubProvider);
+  };
+
   const signOutUser = () => {
     setLoading(true);
-    return signOut(auth)
-      .finally(() => setLoading(false));
+    return signOut(auth);
   };
 
-  // Firebase auth state listener
   useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setLoading(false); // Stop loading once auth state is known
-      console.log('Auth state changed. Current user:', currentUser);
+      setLoading(false);
     });
 
-    // Cleanup on unmount
-    return () => unSubscribe();
+    return () => unsubscribe();
   }, []);
 
-  // Context value
-  const authInfo = useMemo(() => ({
-    loading,
-    user,
-    createUser,
-    signInUser,
-    signOutUser,
-  }), [loading, user]);
+  const authInfo = useMemo(
+    () => ({
+      user,
+      loading,
+      db, // ✅ now db is available to consumers
+      userId: user?.uid || null, // ✅ used in CourseDetailsPage
+      createUser,
+      signInUser,
+      signOutUser,
+      signInWithGoogle,
+      signInWithGithub,
+    }),
+    [user, loading]
+  );
 
   return (
     <AuthContext.Provider value={authInfo}>

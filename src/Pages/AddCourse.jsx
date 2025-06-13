@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import { BookOpen, Image, Clock, Users, Calendar } from 'lucide-react';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
 
-
 const AddCourse = () => {
   const { user, db, userId } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -44,7 +43,7 @@ const AddCourse = () => {
         seats: parseInt(seats, 10),
         instructorEmail: user.email,
         instructorName: user.displayName || 'Anonymous Instructor',
-        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
         status: 'active',
         createdByUserId: userId,
       };
@@ -65,97 +64,61 @@ const AddCourse = () => {
     <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl border border-gray-200 w-full max-w-2xl">
       <h2 className="text-4xl font-bold text-center text-blue-700 mb-8">Add New Course</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="courseTitle" className="block text-gray-700 text-sm font-semibold mb-2">
-            Course Title
-          </label>
-          <div className="relative">
-            <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              id="courseTitle"
-              type="text"
-              className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
-              placeholder="e.g., Advanced JavaScript"
-              value={courseTitle}
-              onChange={(e) => setCourseTitle(e.target.value)}
-              required
-            />
-          </div>
-        </div>
+        {/* Course Title */}
+        <InputField
+          id="courseTitle"
+          icon={BookOpen}
+          type="text"
+          placeholder="e.g., Advanced JavaScript"
+          value={courseTitle}
+          onChange={setCourseTitle}
+          label="Course Title"
+        />
 
-        <div>
-          <label htmlFor="shortDescription" className="block text-gray-700 text-sm font-semibold mb-2">
-            Short Description
-          </label>
-          <div className="relative">
-            <BookOpen className="absolute left-3 top-3 text-gray-400" size={20} />
-            <textarea
-              id="shortDescription"
-              rows={3}
-              className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
-              placeholder="A brief overview of the course content."
-              value={shortDescription}
-              onChange={(e) => setShortDescription(e.target.value)}
-              required
-            />
-          </div>
-        </div>
+        {/* Short Description */}
+        <TextAreaField
+          id="shortDescription"
+          icon={BookOpen}
+          placeholder="A brief overview of the course content."
+          value={shortDescription}
+          onChange={setShortDescription}
+          label="Short Description"
+        />
 
-        <div>
-          <label htmlFor="imageURL" className="block text-gray-700 text-sm font-semibold mb-2">
-            Image URL
-          </label>
-          <div className="relative">
-            <Image className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              id="imageURL"
-              type="url"
-              className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
-              placeholder="https://example.com/course-image.jpg"
-              value={imageURL}
-              onChange={(e) => setImageURL(e.target.value)}
-              required
-            />
-          </div>
-        </div>
+        {/* Image URL */}
+        <InputField
+          id="imageURL"
+          icon={Image}
+          type="url"
+          placeholder="https://example.com/image.jpg"
+          value={imageURL}
+          onChange={setImageURL}
+          label="Image URL"
+        />
 
-        <div>
-          <label htmlFor="duration" className="block text-gray-700 text-sm font-semibold mb-2">
-            Duration (e.g., 20 Hours, 4 Weeks)
-          </label>
-          <div className="relative">
-            <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              id="duration"
-              type="text"
-              className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
-              placeholder="e.g., 20 Hours"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              required
-            />
-          </div>
-        </div>
+        {/* Duration */}
+        <InputField
+          id="duration"
+          icon={Clock}
+          type="text"
+          placeholder="e.g., 20 Hours"
+          value={duration}
+          onChange={setDuration}
+          label="Duration"
+        />
 
-        <div>
-          <label htmlFor="seats" className="block text-gray-700 text-sm font-semibold mb-2">
-            Available Seats
-          </label>
-          <div className="relative">
-            <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              id="seats"
-              type="number"
-              className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
-              placeholder="e.g., 10 (number of available seats)"
-              value={seats}
-              onChange={(e) => setSeats(e.target.value)}
-              min="0"
-              required
-            />
-          </div>
-        </div>
+        {/* Seats */}
+        <InputField
+          id="seats"
+          icon={Users}
+          type="number"
+          placeholder="e.g., 10"
+          value={seats}
+          onChange={setSeats}
+          label="Available Seats"
+        />
 
+        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-xl hover:bg-blue-700 transition duration-300 flex items-center justify-center space-x-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
@@ -187,3 +150,45 @@ const AddCourse = () => {
 };
 
 export default AddCourse;
+
+// 🔧 Reusable InputField Component
+const InputField = ({ id, icon: Icon, type, value, onChange, placeholder, label }) => (
+  <div>
+    <label htmlFor={id} className="block text-gray-700 text-sm font-semibold mb-2">
+      {label}
+    </label>
+    <div className="relative">
+      <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+      <input
+        id={id}
+        type={type}
+        className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required
+      />
+    </div>
+  </div>
+);
+
+// 🔧 Reusable TextAreaField Component
+const TextAreaField = ({ id, icon: Icon, value, onChange, placeholder, label }) => (
+  <div>
+    <label htmlFor={id} className="block text-gray-700 text-sm font-semibold mb-2">
+      {label}
+    </label>
+    <div className="relative">
+      <Icon className="absolute left-3 top-3 text-gray-400" size={20} />
+      <textarea
+        id={id}
+        rows={3}
+        className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required
+      />
+    </div>
+  </div>
+);

@@ -4,15 +4,30 @@ import Lottie from 'lottie-react';
 import RegisterLottie from '../../assets/Animation/Signup Animation.json';
 import AuthContext from '../../FirebaseAuthContext/AuthContext';
 import { updateProfile } from 'firebase/auth';
-import { FaGoogle, FaGithub } from 'react-icons/fa';
+import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
+import axios from 'axios';
 
 const Register = () => {
   const { createUser, signInWithGoogle, signInWithGithub } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const from = location.state?.from?.pathname || '/';
+
+  const sendTokenToServer = async (token) => {
+    try {
+      await axios.get('http://localhost:3000/courses', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (err) {
+      console.error('Token send error:', err);
+    }
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -28,7 +43,7 @@ const Register = () => {
 
     if (!passwordRegex.test(password)) {
       return setError(
-        'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.'
+        'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.'
       );
     }
 
@@ -44,8 +59,16 @@ const Register = () => {
       const result = await createUser(email, password);
       await updateProfile(result.user, {
         displayName: name,
-        photoURL: photoURL,
+        photoURL,
       });
+
+      const idToken = await result.user.getIdToken();
+      localStorage.setItem(
+        'user',
+        JSON.stringify({ email: result.user.email, accessToken: idToken })
+      );
+
+      await sendTokenToServer(idToken);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message);
@@ -54,11 +77,20 @@ const Register = () => {
 
   const handleSocialLogin = async (provider) => {
     try {
+      let result;
       if (provider === 'google') {
-        await signInWithGoogle();
+        result = await signInWithGoogle();
       } else if (provider === 'github') {
-        await signInWithGithub();
+        result = await signInWithGithub();
       }
+
+      const idToken = await result.user.getIdToken();
+      localStorage.setItem(
+        'user',
+        JSON.stringify({ email: result.user.email, accessToken: idToken })
+      );
+
+      await sendTokenToServer(idToken);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Social login failed.');
@@ -70,7 +102,7 @@ const Register = () => {
       <div className="flex flex-col-reverse lg:flex-row items-center gap-10 w-full max-w-6xl">
         {/* Animation */}
         <div className="w-full max-w-md lg:max-w-lg">
-          <Lottie animationData={RegisterLottie} loop={true} />
+          <Lottie animationData={RegisterLottie} loop />
         </div>
 
         {/* Register Card */}
@@ -86,7 +118,7 @@ const Register = () => {
                 <input
                   type="text"
                   name="name"
-                  className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   placeholder="Your Name"
                   required
                 />
@@ -97,7 +129,7 @@ const Register = () => {
                 <input
                   type="text"
                   name="photoURL"
-                  className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="input input-bordered w-full"
                   placeholder="Photo URL"
                   required
                 />
@@ -108,37 +140,55 @@ const Register = () => {
                 <input
                   name="email"
                   type="email"
-                  className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   placeholder="Your Email"
                   required
                 />
               </div>
 
+              {/* Password */}
               <div>
                 <label className="label text-blue-900 font-medium">Password</label>
-                <input
-                  name="password"
-                  type="password"
-                  className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Password"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    className="input input-bordered w-full pr-10"
+                    placeholder="Password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </div>
 
+              {/* Confirm Password */}
               <div>
                 <label className="label text-blue-900 font-medium">Confirm Password</label>
-                <input
-                  name="confirmPassword"
-                  type="password"
-                  className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Confirm Password"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    name="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    className="input input-bordered w-full pr-10"
+                    placeholder="Confirm Password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </div>
 
-              {error && (
-                <p className="text-sm text-red-600 font-medium mt-2">{error}</p>
-              )}
+              {error && <p className="text-sm text-red-600 font-medium mt-2">{error}</p>}
 
               <button
                 type="submit"
@@ -151,7 +201,7 @@ const Register = () => {
             {/* Divider */}
             <div className="divider text-blue-900 font-medium">OR</div>
 
-            {/* Social Login Buttons */}
+            {/* Social Login */}
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => handleSocialLogin('google')}

@@ -2,9 +2,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { XCircle } from 'lucide-react';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
-import { collection, deleteDoc, doc, getDoc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+  updateDoc,
+  where
+} from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
-// import LoadingSpinner from '../../Components/LoadingSpinner';
 
 const MyEnrolledCourses = () => {
   const { user, db, loading: authLoading, userId } = useContext(AuthContext);
@@ -22,18 +30,22 @@ const MyEnrolledCourses = () => {
         const enrollmentsRef = collection(db, `artifacts/${appId}/users/${userId}/enrollments`);
         const q = query(enrollmentsRef, where("userEmail", "==", user.email));
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-          const fetchedEnrollments = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }));
-          setEnrolledCourses(fetchedEnrollments);
-          setLoading(false);
-        }, (error) => {
-          console.error("Error fetching enrolled courses:", error);
-          toast.error("Failed to load your enrolled courses.");
-          setLoading(false);
-        });
+        const unsubscribe = onSnapshot(
+          q,
+          (snapshot) => {
+            const fetchedEnrollments = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            setEnrolledCourses(fetchedEnrollments);
+            setLoading(false);
+          },
+          (error) => {
+            console.error("Error fetching enrolled courses:", error);
+            toast.error("Failed to load your enrolled courses.");
+            setLoading(false);
+          }
+        );
 
         return () => unsubscribe();
       } catch (error) {
@@ -124,9 +136,12 @@ const MyEnrolledCourses = () => {
                       {enrollment.courseTitle}
                     </Link>
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {new Date(enrollment.enrollmentDate).toLocaleDateString()}
+                    Enrolled on: {enrollment.enrollmentDate?.toDate().toLocaleDateString()}
                   </td>
+
+
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={() => handleRemoveClick(enrollment)}
@@ -143,7 +158,6 @@ const MyEnrolledCourses = () => {
         </div>
       )}
 
-      {/* Remove Confirmation Modal */}
       {showRemoveModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
