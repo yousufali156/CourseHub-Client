@@ -1,148 +1,141 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router';
-import { collection, addDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
-import { BookOpen, Image, Clock, Users, Calendar } from 'lucide-react';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
+import { useNavigate } from 'react-router';
 
 const AddCourse = () => {
-  const { user, db, userId } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
   const [courseTitle, setCourseTitle] = useState('');
-  const [shortDescription, setShortDescription] = useState('');
-  const [imageURL, setImageURL] = useState('');
-  const [duration, setDuration] = useState('');
+  const [image, setImage] = useState('');
   const [seats, setSeats] = useState('');
+  const [duration, setDuration] = useState('');
+  const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-  const handleSubmit = async (e) => {
+  const handleAddCourse = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    if (!user || !db) {
-      toast.error("You must be logged in to add a course.");
-      setLoading(false);
+    if (!user) {
+      toast.error('You must be logged in to add a course.');
       return;
     }
 
-    if (seats < 0 || isNaN(seats)) {
-      toast.error("Seats must be a non-negative number.");
-      setLoading(false);
+    if (!courseTitle || !image || !seats || !duration || !description) {
+      toast.error('Please fill in all fields.');
       return;
     }
+
+    const newCourse = {
+      courseTitle,
+      image,
+      seats: parseInt(seats),
+      duration,
+      description,
+      instructorEmail: user.email,
+      timestamp: new Date().toISOString(),
+    };
 
     try {
-      const newCourse = {
-        courseTitle,
-        shortDescription,
-        imageURL,
-        duration,
-        seats: parseInt(seats, 10),
-        instructorEmail: user.email,
-        instructorName: user.displayName || 'Anonymous Instructor',
-        createdAt: new Date().toISOString(),
-        status: 'active',
-        createdByUserId: userId,
-      };
+      setLoading(true);
+      const res = await fetch('http://localhost:3000/courses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCourse),
+      });
 
-      await addDoc(collection(db, `artifacts/${appId}/public/data/courses`), newCourse);
+      if (!res.ok) throw new Error('Failed to add course');
 
-      toast.success("Course added successfully!");
-      navigate('/manage-courses');
+      toast.success('Course added successfully!');
+      navigate('/manage-course');
     } catch (error) {
-      console.error("Error adding course:", error);
-      toast.error(error.message || "Failed to add course.");
+      console.error(error);
+      toast.error('Something went wrong. Try again later.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl border border-gray-200 w-full max-w-2xl">
-      <h2 className="text-4xl font-bold text-center text-blue-700 mb-8">Add New Course</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="max-w-2xl mx-auto p-8 bg-base-300 rounded-lg shadow-md mt-10 border border-gray-200">
+      <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">Add New Course</h2>
+      <form onSubmit={handleAddCourse} className="space-y-6">
         {/* Course Title */}
-        <InputField
-          id="courseTitle"
-          icon={BookOpen}
-          type="text"
-          placeholder="e.g., Advanced JavaScript"
-          value={courseTitle}
-          onChange={setCourseTitle}
-          label="Course Title"
-        />
-
-        {/* Short Description */}
-        <TextAreaField
-          id="shortDescription"
-          icon={BookOpen}
-          placeholder="A brief overview of the course content."
-          value={shortDescription}
-          onChange={setShortDescription}
-          label="Short Description"
-        />
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Course Title</label>
+          <input
+            type="text"
+            value={courseTitle}
+            onChange={(e) => setCourseTitle(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter course title"
+            required
+          />
+        </div>
 
         {/* Image URL */}
-        <InputField
-          id="imageURL"
-          icon={Image}
-          type="url"
-          placeholder="https://example.com/image.jpg"
-          value={imageURL}
-          onChange={setImageURL}
-          label="Image URL"
-        />
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Image URL</label>
+          <input
+            type="text"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter course image URL"
+            required
+          />
+        </div>
+
+        {/* Available Seats */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Available Seats</label>
+          <input
+            type="number"
+            value={seats}
+            onChange={(e) => setSeats(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Total seats (e.g., 10)"
+            min={1}
+            required
+          />
+        </div>
 
         {/* Duration */}
-        <InputField
-          id="duration"
-          icon={Clock}
-          type="text"
-          placeholder="e.g., 20 Hours"
-          value={duration}
-          onChange={setDuration}
-          label="Duration"
-        />
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Duration</label>
+          <input
+            type="text"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g., 4 weeks, 2 months"
+            required
+          />
+        </div>
 
-        {/* Seats */}
-        <InputField
-          id="seats"
-          icon={Users}
-          type="number"
-          placeholder="e.g., 10"
-          value={seats}
-          onChange={setSeats}
-          label="Available Seats"
-        />
+        {/* Description */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={4}
+            placeholder="Enter full course description"
+            required
+          />
+        </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-xl hover:bg-blue-700 transition duration-300 flex items-center justify-center space-x-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
+          className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition duration-300 disabled:opacity-50"
         >
-          {loading ? (
-            <svg
-              className="animate-spin h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-          ) : (
-            <>
-              <Calendar size={20} /> <span>Add Course</span>
-            </>
-          )}
+          {loading ? 'Submitting...' : 'Add Course'}
         </button>
       </form>
     </div>
@@ -150,45 +143,3 @@ const AddCourse = () => {
 };
 
 export default AddCourse;
-
-// 🔧 Reusable InputField Component
-const InputField = ({ id, icon: Icon, type, value, onChange, placeholder, label }) => (
-  <div>
-    <label htmlFor={id} className="block text-gray-700 text-sm font-semibold mb-2">
-      {label}
-    </label>
-    <div className="relative">
-      <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-      <input
-        id={id}
-        type={type}
-        className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required
-      />
-    </div>
-  </div>
-);
-
-// 🔧 Reusable TextAreaField Component
-const TextAreaField = ({ id, icon: Icon, value, onChange, placeholder, label }) => (
-  <div>
-    <label htmlFor={id} className="block text-gray-700 text-sm font-semibold mb-2">
-      {label}
-    </label>
-    <div className="relative">
-      <Icon className="absolute left-3 top-3 text-gray-400" size={20} />
-      <textarea
-        id={id}
-        rows={3}
-        className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required
-      />
-    </div>
-  </div>
-);

@@ -6,10 +6,10 @@ import {
   Route,
   createRoutesFromElements,
   Outlet,
-} from 'react-router'; 
+} from 'react-router';
 // Components & Pages
 import Navbar from './Components/Navbar/Navbar';
-import Footer from './components/Footer';
+import Footer from './Components/Footer';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import AddCourse from './pages/AddCourse';
@@ -21,6 +21,8 @@ import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
 import NotFoundCourse from './Components/NotFoundCourse';
 import CourseDetailsPage from './pages/CourseDetailsPage';
+import EditCourseButton from './Pages/EditCourseButton';
+import MyCourseDetailsButton from './Pages/MyCourseDetailsButton';
 
 // Layout wrapper
 const AppLayout = () => (
@@ -48,6 +50,8 @@ const App = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<NotFoundCourse />} />
+        <Route path="/edit-course/:id" element={<EditCourseButton />} />
+        <Route path="/course/:id" element={<MyCourseDetailsButton />} />
       </Route>
     )
   );

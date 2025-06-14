@@ -1,57 +1,40 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { collection, query, where, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { Edit, Trash2, Info } from 'react-feather';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
 
-// import LoadingSpinner from '../Components/LoadingSpinner';
-
-
 const ManageCourse = () => {
-  const { user, db, loading: authLoading } = useContext(AuthContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState(null);
 
-  const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-  useEffect(() => {
-    if (!authLoading && user && db) {
+  const fetchCourses = async () => {
+    if (!user) return;
+    try {
       setLoading(true);
-      try {
-        const coursesRef = collection(db, `artifacts/${appId}/public/data/courses`);
-        const q = query(coursesRef, where('instructorEmail', '==', user.email));
-
-        const unsubscribe = onSnapshot(
-          q,
-          (snapshot) => {
-            const fetchedCourses = snapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            }));
-            fetchedCourses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            setCourses(fetchedCourses);
-            setLoading(false);
-          },
-          (error) => {
-            console.error('Error fetching managed courses:', error);
-            toast.error('Failed to load your courses.');
-            setLoading(false);
-          }
-        );
-
-        return () => unsubscribe();
-      } catch (error) {
-        console.error('Error setting up Firestore listener:', error);
-        toast.error('Failed to set up real-time course updates.');
-        setLoading(false);
-      }
-    } else if (!authLoading && !user) {
+      const res = await fetch(`http://localhost:3000/courses?instructorEmail=${user.email}`);
+      if (!res.ok) throw new Error('Failed to fetch courses');
+      const data = await res.json();
+      const sorted = data.sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+      setCourses(sorted);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      toast.error('Failed to load your courses.');
+    } finally {
       setLoading(false);
     }
-  }, [user, db, authLoading, appId]);
+  };
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      fetchCourses();
+    }
+  }, [user, authLoading]);
 
   const handleDeleteClick = (course) => {
     setCourseToDelete(course);
@@ -59,15 +42,19 @@ const ManageCourse = () => {
   };
 
   const confirmDelete = async () => {
-    if (!courseToDelete || !db) return;
-    setLoading(true);
+    if (!courseToDelete) return;
     try {
-      await deleteDoc(doc(db, `artifacts/${appId}/public/data/courses`, courseToDelete.id));
+      setLoading(true);
+      const res = await fetch(`http://localhost:3000/courses/${courseToDelete._id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete');
       toast.success(`Course "${courseToDelete.courseTitle}" deleted successfully!`);
       setShowDeleteModal(false);
       setCourseToDelete(null);
+      fetchCourses(); // Reload after delete
     } catch (error) {
-      console.error('Error deleting course:', error);
+      console.error('Delete error:', error);
       toast.error('Failed to delete course.');
     } finally {
       setLoading(false);
@@ -75,7 +62,11 @@ const ManageCourse = () => {
   };
 
   if (authLoading || loading) {
-    return ;
+    return (
+      <div className="text-center py-10">
+        <p className="text-lg text-gray-600 font-medium">Loading your courses...</p>
+      </div>
+    );
   }
 
   if (!user) {
@@ -111,51 +102,37 @@ const ManageCourse = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-blue-50">
               <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-lg"
-                >
-                  Course Title
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Short Description
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Seats
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-lg"
-                >
-                  Actions
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seats</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {courses.map((course) => (
-                <tr key={course.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{course.courseTitle}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{course.shortDescription}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{course.seats}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <tr key={course._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{course.courseTitle}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 line-clamp-2">{course.description}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{course.seats}</td>
+                  <td className="px-6 py-4 text-right text-sm font-medium">
                     <div className="flex space-x-2">
                       <Link
-                        to={`/edit-course/${course.id}`}
-                        className="text-blue-600 hover:text-blue-900 bg-blue-100 p-2 rounded-full transition duration-300 hover:bg-blue-200"
+                        to={`/edit-course/${course._id}`}
+                        className="text-blue-600 hover:text-blue-900 bg-blue-100 p-2 rounded-full"
                         title="Edit Course"
                       >
                         <Edit size={20} />
                       </Link>
                       <button
                         onClick={() => handleDeleteClick(course)}
-                        className="text-red-600 hover:text-red-900 bg-red-100 p-2 rounded-full transition duration-300 hover:bg-red-200"
+                        className="text-red-600 hover:text-red-900 bg-red-100 p-2 rounded-full"
                         title="Delete Course"
                       >
                         <Trash2 size={20} />
                       </button>
                       <Link
-                        to={`/course/${course.id}`}
-                        className="text-gray-600 hover:text-gray-900 bg-gray-100 p-2 rounded-full transition duration-300 hover:bg-gray-200"
+                        to={`/course/${course._id}`}
+                        className="text-gray-600 hover:text-gray-900 bg-gray-100 p-2 rounded-full"
                         title="View Details"
                       >
                         <Info size={20} />
@@ -169,26 +146,25 @@ const ManageCourse = () => {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
             <Trash2 className="text-red-500 mx-auto mb-4" size={48} />
             <h3 className="text-xl font-bold text-gray-800 mb-4">Confirm Deletion</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "<span className="font-semibold">{courseToDelete?.courseTitle}</span>"? This
-              action cannot be undone.
+              Are you sure you want to delete "<span className="font-semibold">{courseToDelete?.courseTitle}</span>"?
             </p>
             <div className="flex justify-center space-x-4">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-300 text-gray-800 px-6 py-2 rounded-full font-semibold hover:bg-gray-400 transition duration-300"
+                className="bg-gray-300 text-gray-800 px-6 py-2 rounded-full font-semibold hover:bg-gray-400"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700"
                 disabled={loading}
               >
                 {loading ? 'Deleting...' : 'Delete'}
