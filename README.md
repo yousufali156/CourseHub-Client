@@ -1,12 +1,82 @@
-# React + Vite
+# 🎓 CourseHub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-featured web application where users can browse available courses, enroll in them, and manage their enrolled courses — built with React, Firebase Auth, Node.js, and MongoDB.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Live Website
 
-## Expanding the ESLint configuration
+🔗 [Live Link](https://your-live-site-link.vercel.app)  
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+---
+
+## 🎯 Project Purpose
+
+This project was created to practice and demonstrate real-world full-stack development skills, including:
+
+- JWT-based authentication
+- Firebase integration
+- Protected/private routes
+- Secure CRUD operations
+- MongoDB aggregation & queries
+- Role-based UI and behavior
+- Deployment best practices
+
+---
+
+## 🔑 Key Features
+
+- 🔐 **Authentication:**
+  - Email/Password login + Google/GitHub social login
+  - JWT implementation for protected routes
+- 📚 **Course Management:**
+  - Add, update, and delete your courses
+  - View all enrolled courses
+  - Enroll with a seat limitation
+- 🧠 **Smart Logic:**
+  - Prevent multiple enrollments
+  - Maximum 3 active courses per user
+- 🎨 **UI/UX:**
+  - Responsive on all devices
+  - Modern, clean design with Tailwind & framer-motion
+  - Custom 404 page, dynamic titles, toast notifications
+- 🧾 **Bonus:**
+  - Slick slider on homepage
+  - Loading spinners and modals
+  - Environment variable protection for Firebase and MongoDB
+
+---
+
+## 🧰 Technologies Used
+
+### 🔧 Client-side
+
+- **React.js**
+- **TailwindCSS**
+- **Framer Motion**
+- **React-Slick**
+- **Firebase Authentication**
+- **Axios**
+- **JWT Decode**
+
+### 🌐 Server-side
+
+- **Node.js**
+- **Express.js**
+- **MongoDB**
+- **CORS**
+- **Dotenv**
+- **jsonwebtoken**
+- **Cookie-parser**
+
+---
+
+## 📁 Folder Structure
+
+/client
+├── /src
+│ ├── /pages
+│ ├── /components
+│ ├── /contexts
+│ └── /routes
