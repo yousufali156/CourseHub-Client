@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { LogIn, LogOut, UserPlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import AuthContext from '../../FirebaseAuthContext/AuthContext';
+import ThemeToggle from '../ThemeToggle';
 
 const Navbar = () => {
   const { user, signOutUser, loading } = useContext(AuthContext);
@@ -35,27 +36,35 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="text-white text-2xl font-bold">
           Course<span className="text-yellow-300">Hub</span>
-          
+
         </Link>
 
         {/* Hamburger */}
-        <button
-          className="lg:hidden text-white"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d={
-                isMobileMenuOpen
-                  ? 'M6 18L18 6M6 6l12 12'
-                  : 'M4 6h16M4 12h16M4 18h16'
-              }
-            />
-          </svg>
-        </button>
+
+
+        <div className='lg:hidden flex items-center'>
+          <ThemeToggle></ThemeToggle>
+          <button
+            className="lg:hidden text-white"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+
+
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d={
+                  isMobileMenuOpen
+                    ? 'M6 18L18 6M6 6l12 12'
+                    : 'M4 6h16M4 12h16M4 18h16'
+                }
+              />
+            </svg>
+          </button>
+        </div>
+
 
         {/* Nav Links - Desktop */}
         <ul className="hidden lg:flex space-x-6 font-medium text-lg">
@@ -70,10 +79,13 @@ const Navbar = () => {
             </>
           )}
           <li><Link to="/about" className={navLinkClass('/about')}>About</Link></li>
+
+
         </ul>
 
         {/* Auth Section - Desktop */}
         <div className="hidden lg:flex items-center gap-4">
+          <ThemeToggle></ThemeToggle>
           {user ? (
             <div className="relative group">
               <img
@@ -95,7 +107,10 @@ const Navbar = () => {
                   <LogOut size={16} className="mr-2" /> Logout
                 </button>
               </div>
+
             </div>
+
+
           ) : (
             <>
               <Link to="/login" className="bg-yellow-400 text-blue-900 px-4 py-2 rounded-full font-semibold flex items-center gap-2 shadow-md hover:bg-yellow-300 transition">
@@ -110,7 +125,10 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
+
           <div className="w-full mt-4 lg:hidden space-y-2">
+
+
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Home</Link>
             <Link to="/courses" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Courses</Link>
             {user && (
@@ -123,9 +141,11 @@ const Navbar = () => {
             )}
             <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">About</Link>
 
+
             <hr className="border-blue-500 my-2" />
 
             {user ? (
+
               <button
                 onClick={() => {
                   handleLogout();
@@ -141,6 +161,7 @@ const Navbar = () => {
                 <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Register</Link>
               </>
             )}
+
           </div>
         )}
       </div>
