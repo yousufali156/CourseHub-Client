@@ -60,12 +60,12 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-8 bg-base-300 rounded-lg shadow-md mt-10 border border-gray-200">
-      <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">Add New Course</h2>
+    <div className="max-w-2xl mx-auto p-8 rounded-lg shadow-md mt-10 border border-gray-200">
+      <h2 className="text-3xl font-bold text-center text-blue-500 mb-6">Add New Course</h2>
       <form onSubmit={handleAddCourse} className="space-y-6">
         {/* Course Title */}
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Course Title</label>
+          <label className="block font-medium mb-2">Course Title</label>
           <input
             type="text"
             value={courseTitle}
@@ -78,7 +78,7 @@ const AddCourse = () => {
 
         {/* Image URL */}
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Image URL</label>
+          <label className="block font-medium mb-2">Image URL</label>
           <input
             type="text"
             value={image}
@@ -91,7 +91,7 @@ const AddCourse = () => {
 
         {/* Available Seats */}
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Available Seats</label>
+          <label className="block font-medium mb-2">Available Seats</label>
           <input
             type="number"
             value={seats}
@@ -105,7 +105,7 @@ const AddCourse = () => {
 
         {/* Duration */}
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Duration</label>
+          <label className="block  font-medium mb-2">Duration</label>
           <input
             type="text"
             value={duration}
@@ -118,7 +118,7 @@ const AddCourse = () => {
 
         {/* Description */}
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Description</label>
+          <label className="block  font-medium mb-2">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}

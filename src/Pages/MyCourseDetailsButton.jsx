@@ -95,11 +95,12 @@ const handleEnroll = async () => {
 };
 
 
-  if (pageLoading) return <div className="text-center py-10 text-gray-600">Loading course details...</div>;
+  if (pageLoading) return <div className="text-center py-10 text-base-300">Loading course details...</div>;
   if (!course) return <NotFoundCourse />;
 
   return (
-    <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl">
+  <div className="container mx-auto min-h-screen flex items-center justify-center p-6 my-8 rounded-lg shadow-xl">
+
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="lg:w-1/2">
           <img
@@ -111,17 +112,17 @@ const handleEnroll = async () => {
 
         <div className="lg:w-1/2 flex flex-col justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-blue-800 mb-4">{course.courseTitle}</h1>
-            <p className="text-gray-700 mb-4">{course.shortDescription}</p>
+            <h1 className="text-4xl font-bold text-blue-500 mb-4">{course.courseTitle}</h1>
+            <p className=" mb-4">{course.shortDescription}</p>
 
-            <div className="grid grid-cols-2 gap-4 text-sm text-gray-800 mb-6">
+            <div className="grid grid-cols-2 gap-4 text-sm  mb-6">
               <p><strong>Instructor:</strong> {course.instructorName}</p>
               <p><strong>Duration:</strong> {course.duration}</p>
               <p><strong>Seats Left:</strong> {course.seats}</p>
             </div>
 
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Course Overview</h2>
-            <p className="text-gray-700">{course.fullDescription}</p>
+            <h2 className="text-2xl font-semibold  mb-2">Course Overview</h2>
+            <p className="">{course.fullDescription}</p>
           </div>
 
           <div className="mt-6">

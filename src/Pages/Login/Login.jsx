@@ -82,9 +82,9 @@
 //         </div>
 
 //         {/* Login Card */}
-//         <div className="card w-full max-w-sm bg-white/90 shadow-xl backdrop-blur-md rounded-xl">
+//         <div className="card w-full max-w-sm bg-base-300/90 shadow-xl backdrop-blur-md rounded-xl">
 //           <div className="card-body p-8">
-//             <h1 className="text-4xl font-extrabold text-blue-700 mb-6 text-center">
+//             <h1 className="text-4xl font-extrabold text-blue-500 mb-6 text-center">
 //               Login Now
 //             </h1>
 
@@ -116,7 +116,7 @@
 //                   />
 //                   <button
 //                     type="button"
-//                     className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+//                     className="absolute top-1/2 right-3 -translate-y-1/2 text-base-300"
 //                     onClick={() => setShowPassword(!showPassword)}
 //                     aria-label="Toggle Password Visibility"
 //                   >
@@ -126,7 +126,7 @@
 //               </div>
 
 //               <div className="text-right">
-//                 <a href="#" className="link link-hover text-sm text-blue-600">
+//                 <a href="#" className="link link-hover text-sm text-blue-500">
 //                   Forgot password?
 //                 </a>
 //               </div>
@@ -236,9 +236,9 @@ const Login = () => {
         </div>
 
         {/* Login Card */}
-        <div className="card w-full max-w-sm bg-white/90 shadow-xl backdrop-blur-md rounded-xl">
+        <div className="card w-full max-w-sm bg-base-300/90 shadow-xl backdrop-blur-md rounded-xl">
           <div className="card-body p-8">
-            <h1 className="text-4xl font-extrabold text-blue-700 mb-6 text-center">
+            <h1 className="text-4xl font-extrabold text-blue-500 mb-6 text-center">
               Login Now
             </h1>
 
@@ -270,7 +270,7 @@ const Login = () => {
                   />
                   <button
                     type="button"
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-base-300"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label="Toggle Password Visibility"
                   >
@@ -280,7 +280,7 @@ const Login = () => {
               </div>
 
               <div className="text-right">
-                <a href="#" className="link link-hover text-sm text-blue-600">
+                <a href="#" className="link link-hover text-sm text-blue-500">
                   Forgot password?
                 </a>
               </div>

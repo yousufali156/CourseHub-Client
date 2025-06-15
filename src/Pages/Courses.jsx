@@ -26,7 +26,7 @@ const Courses = () => {
   const visibleCourses = showAll ? courses : courses.slice(0, 6);
 
   return (
-    <div className="p-6 md:p-10 bg-white space-y-12">
+    <div className="p-6 md:p-10 bg-base-300 space-y-12">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl md:text-3xl font-bold">Latest Courses</h2>
         <Link to="/courses" className="text-blue-600 hover:underline font-medium">View All</Link>
@@ -34,15 +34,15 @@ const Courses = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {visibleCourses.map((course) => (
-          <div key={course._id} className="bg-white shadow rounded-lg overflow-hidden">
+          <div key={course._id} className="bg-base-300 shadow rounded-lg overflow-hidden">
             <img
               src={course.imageURL}
               alt={course.courseTitle}
               className="w-full h-50 md:h-80 object-cover"
             />
             <div className="p-3">
-              <h3 className="text-sm font-semibold text-gray-800">{course.courseTitle}</h3>
-              <p className="text-xs text-gray-500 mb-2">
+              <h3 className="text-sm font-semibold bg-base-300">{course.courseTitle}</h3>
+              <p className="text-xs bg-base-300 mb-2">
                 {new Date(course.timestamp).toLocaleDateString()}
               </p>
               <Link to={`/course-details/${course._id}`} className="w-full block">
@@ -64,44 +64,60 @@ const Courses = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start mt-10">
-        <div className="col-span-2 flex items-center gap-4 bg-blue-50 p-4 rounded-lg">
-          <div className="text-blue-600 text-4xl">🔊</div>
-          <div>
-            <h3 className="text-xl font-semibold mb-1">Why Choose Us</h3>
-            <p className="text-gray-600 text-sm">
-              Learn from industry professionals with hands-on projects and certifications that advance your career.
-            </p>
-          </div>
-        </div>
+  
 
-        <div className="bg-white shadow rounded-lg p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold"> 🔹 Popular Courses</h3>
-            <Link to="/popular" className="text-blue-600 text-sm hover:underline">View All</Link>
-          </div>
 
-          <div className="space-y-3">
+
+
+<div className="relative w-full h-1 mt-12 mb-12 overflow-hidden rounded-full bg-blue-500">
+  <div
+    className="absolute inset-0 w-full h-full 
+               bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 to-blue-500 
+               bg-[length:200%_200%] animate-gradient-x"
+  ></div>
+</div>
+
+
+
+
+
+      <div className="w-full bg-base-100 py-10 px-4 md:px-10 lg:px-20 shadow-inner border-t border-gray-200">
+        <div className="max-w-5xl mx-auto text-center">
+          <h3 className="text-2xl md:text-3xl font-bold text-blue-700 mb-6">
+            🔹 Popular Courses
+          </h3>
+
+          <p className="text-base text-gray-600 mb-8">
+            Discover our most enrolled courses, trusted by thousands of learners.
+            <br />
+            Stay ahead with practical skills taught by top industry professionals.
+          </p>
+
+          <div className="space-y-4 text-xl font-semibold text-blue-600">
             {popularCourses.length > 0 ? (
               popularCourses.slice(0, 3).map(course => (
                 <Link
                   to={`/course-details/${course._id}`}
                   key={course._id}
-                  className="block text-sm text-blue-600 hover:underline"
+                  className="block hover:underline hover:text-blue-800 transition duration-300"
                 >
                   {course.courseTitle}
                 </Link>
               ))
             ) : (
               <>
-                <div className="w-full h-4 bg-gray-200 rounded"></div>
-                <div className="w-full h-4 bg-gray-200 rounded"></div>
-                <div className="w-full h-4 bg-gray-200 rounded"></div>
+                <div className="w-full h-5 bg-gray-200 rounded animate-pulse"></div>
+                <div className="w-full h-5 bg-gray-200 rounded animate-pulse"></div>
+                <div className="w-full h-5 bg-gray-200 rounded animate-pulse"></div>
               </>
             )}
           </div>
         </div>
       </div>
+
+
+
+
     </div>
   );
 };

@@ -32,7 +32,7 @@ const slides = [
 const NextArrow = ({ onClick }) => (
   <div
     onClick={onClick}
-    className="absolute right-2 md:right-6 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer text-cyan-500 bg-white p-2 md:p-3 rounded-full shadow hover:bg-cyan-200"
+    className="absolute right-2 md:right-6 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer text-cyan-500 bg-base-300 p-2 md:p-3 rounded-full shadow hover:bg-cyan-200"
     style={{ width: "36px", height: "36px" }}
   >
     <FaArrowRight size={18} />
@@ -42,7 +42,7 @@ const NextArrow = ({ onClick }) => (
 const PrevArrow = ({ onClick }) => (
   <div
     onClick={onClick}
-    className="absolute left-2 md:left-6 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer text-cyan-500 bg-white p-2 md:p-3 rounded-full shadow hover:bg-cyan-200"
+    className="absolute left-2 md:left-6 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer text-cyan-500 bg-base-300 p-2 md:p-3 rounded-full shadow hover:bg-cyan-200"
     style={{ width: "36px", height: "36px" }}
   >
     <FaArrowLeft size={18} />
@@ -114,7 +114,7 @@ const Banner = () => {
               <p
                 className="
                   text-sm sm:text-base md:text-lg lg:text-xl 
-                  text-gray-700 font-medium max-w-xl mb-4 md:mb-5 
+                  text-base-300 font-medium max-w-xl mb-4 md:mb-5 
                   px-2
                 "
               >

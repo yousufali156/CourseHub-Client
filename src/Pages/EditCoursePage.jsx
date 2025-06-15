@@ -101,7 +101,7 @@ const EditCoursePage = () => {
 
     if (!user) {
         return (
-            <div className="container mx-auto p-8 my-8 text-center bg-white rounded-lg shadow-xl border border-gray-200">
+            <div className="container mx-auto p-8 my-8 text-center bg-base-300 rounded-lg shadow-xl border border-gray-200">
                 <p className="text-2xl text-red-600 font-semibold mb-4">You must be logged in to edit courses.</p>
                 <Link to="/login" className="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300 shadow-md">
                     Login Now
@@ -111,16 +111,16 @@ const EditCoursePage = () => {
     }
 
     return (
-        <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl border border-gray-200 w-full max-w-2xl">
-            <h2 className="text-4xl font-bold text-center text-blue-700 mb-8">Edit Course</h2>
+        <div className="container mx-auto p-6 my-8 bg-base-300 rounded-lg shadow-xl border border-gray-200 w-full max-w-2xl">
+            <h2 className="text-4xl font-bold text-center text-blue-500 mb-8">Edit Course</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Course Title */}
                 <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="courseTitle">
+                    <label className="block text-base-300 text-sm font-semibold mb-2" htmlFor="courseTitle">
                         Course Title
                     </label>
                     <div className="relative">
-                        <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 bg-base400" size={20} />
                         <input
                             type="text"
                             id="courseTitle"
@@ -135,11 +135,11 @@ const EditCoursePage = () => {
 
                 {/* Short Description */}
                 <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="shortDescription">
+                    <label className="block text-base-300 text-sm font-semibold mb-2" htmlFor="shortDescription">
                         Short Description
                     </label>
                     <div className="relative">
-                        <Text className="absolute left-3 top-3 text-gray-400" size={20} />
+                        <Text className="absolute left-3 top-3 bg-base400" size={20} />
                         <textarea
                             id="shortDescription"
                             className="w-full px-4 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-lg"
@@ -154,11 +154,11 @@ const EditCoursePage = () => {
 
                 {/* Image URL */}
                 <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="imageURL">
+                    <label className="block text-base-300 text-sm font-semibold mb-2" htmlFor="imageURL">
                         Image URL
                     </label>
                     <div className="relative">
-                        <LucideImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <LucideImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 bg-base400" size={20} />
                         <input
                             type="url"
                             id="imageURL"
@@ -173,11 +173,11 @@ const EditCoursePage = () => {
 
                 {/* Duration */}
                 <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="duration">
+                    <label className="block text-base-300 text-sm font-semibold mb-2" htmlFor="duration">
                         Duration (e.g., 20 Hours, 4 Weeks)
                     </label>
                     <div className="relative">
-                        <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <Clock className="absolute left-3 top-1/2 -translate-y-1/2 bg-base400" size={20} />
                         <input
                             type="text"
                             id="duration"
@@ -192,11 +192,11 @@ const EditCoursePage = () => {
 
                 {/* Seats */}
                 <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="seats">
+                    <label className="block text-base-300 text-sm font-semibold mb-2" htmlFor="seats">
                         Available Seats
                     </label>
                     <div className="relative">
-                        <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <Users className="absolute left-3 top-1/2 -translate-y-1/2 bg-base400" size={20} />
                         <input
                             type="number"
                             id="seats"

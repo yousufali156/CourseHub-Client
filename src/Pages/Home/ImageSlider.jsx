@@ -72,7 +72,7 @@ const ImageSlider = ({ slides = defaultSlides }) => {
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={index === currentSlide ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                                 transition={{ duration: 0.5, delay: 0.6 }}
-                                className="mt-8 bg-yellow-400 text-blue-800 hover:bg-yellow-300 px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition duration-300"
+                                className="mt-8 bg-yellow-400 text-blue-500 hover:bg-yellow-300 px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition duration-300"
                             >
                                 Explore Courses
                             </motion.button>
@@ -84,13 +84,13 @@ const ImageSlider = ({ slides = defaultSlides }) => {
             {/* Navigation Arrows */}
             <button
                 onClick={goToPrevious}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 text-blue-600 p-2 rounded-full hover:bg-opacity-90 transition-all duration-300 z-20"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-base-300 bg-opacity-70 text-blue-500 p-2 rounded-full hover:bg-opacity-90 transition-all duration-300 z-20"
             >
                 <ChevronLeft size={32} />
             </button>
             <button
                 onClick={goToNext}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 text-blue-600 p-2 rounded-full hover:bg-opacity-90 transition-all duration-300 z-20"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-base-300 bg-opacity-70 text-blue-500 p-2 rounded-full hover:bg-opacity-90 transition-all duration-300 z-20"
             >
                 <ChevronRight size={32} />
             </button>
@@ -102,7 +102,7 @@ const ImageSlider = ({ slides = defaultSlides }) => {
                         key={idx}
                         onClick={() => setCurrentSlide(idx)}
                         className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                            currentSlide === idx ? 'bg-white' : 'bg-gray-400 bg-opacity-70'
+                            currentSlide === idx ? 'bg-base-300' : 'bg-gray-400 bg-opacity-70'
                         }`}
                     />
                 ))}

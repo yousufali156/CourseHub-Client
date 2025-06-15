@@ -64,14 +64,14 @@ const ManageCourse = () => {
   if (authLoading || loading) {
     return (
       <div className="text-center py-10">
-        <p className="text-lg text-gray-600 font-medium">Loading your courses...</p>
+        <p className="text-lg text-base-300 font-medium">Loading your courses...</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="container mx-auto p-8 my-8 text-center bg-white rounded-lg shadow-xl border border-gray-200">
+      <div className="container mx-auto p-8 my-8 text-center bg-base-300 rounded-lg shadow-xl border border-gray-200">
         <p className="text-2xl text-red-600 font-semibold mb-4">You must be logged in to manage courses.</p>
         <Link
           to="/login"
@@ -84,12 +84,12 @@ const ManageCourse = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl border border-gray-200">
-      <h2 className="text-4xl font-bold text-center text-blue-700 mb-8">Manage Your Courses</h2>
+    <div className="container mx-auto p-6 my-8 bg-base-300 rounded-lg shadow-xl border border-gray-200">
+      <h2 className="text-4xl font-bold text-center text-blue-500 mb-8">Manage Your Courses</h2>
 
       {courses.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-gray-600 text-lg mb-4">You haven't added any courses yet.</p>
+          <p className="text-base-300 text-lg mb-4">You haven't added any courses yet.</p>
           <Link
             to="/add-course"
             className="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition duration-300 shadow-md"
@@ -98,27 +98,27 @@ const ManageCourse = () => {
           </Link>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-blue-50">
+        <div className="overflow-x-auto rounded-lg shadow-md border ">
+          <table className="min-w-full divide-y h-50 border">
+            <thead className="font-bold text-8xl bg-green-400 ">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seats</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Course Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Seats</th>
+                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className=" divide-y ">
               {courses.map((course) => (
-                <tr key={course._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{course.courseTitle}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700 line-clamp-2">{course.description}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{course.seats}</td>
+                <tr key={course._id} className="">
+                  <td className="px-6 py-4 text-sm font-medium ">{course.courseTitle}</td>
+                  <td className="px-6 py-4 text-sm line-clamp-2">{course.shortDescription}</td>
+                  <td className="px-6 py-4 text-sm">{course.seats}</td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
                     <div className="flex space-x-2">
                       <Link
                         to={`/edit-course/${course._id}`}
-                        className="text-blue-600 hover:text-blue-900 bg-blue-100 p-2 rounded-full"
+                        className="text-blue-500 hover:text-blue-900 bg-blue-100 p-2 rounded-full"
                         title="Edit Course"
                       >
                         <Edit size={20} />
@@ -132,7 +132,7 @@ const ManageCourse = () => {
                       </button>
                       <Link
                         to={`/course/${course._id}`}
-                        className="text-gray-600 hover:text-gray-900 bg-gray-100 p-2 rounded-full"
+                        className="text-base-300 hover:text-base-300 bg-green-500 p-2 rounded-full"
                         title="View Details"
                       >
                         <Info size={20} />
@@ -149,16 +149,16 @@ const ManageCourse = () => {
       {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
+          <div className="bg-base-300 rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
             <Trash2 className="text-red-500 mx-auto mb-4" size={48} />
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Confirm Deletion</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-bold text-base-300 mb-4">Confirm Deletion</h3>
+            <p className="text-base-300 mb-6">
               Are you sure you want to delete "<span className="font-semibold">{courseToDelete?.courseTitle}</span>"?
             </p>
             <div className="flex justify-center space-x-4">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-300 text-gray-800 px-6 py-2 rounded-full font-semibold hover:bg-gray-400"
+                className="bg-gray-300 text-base-300 px-6 py-2 rounded-full font-semibold hover:bg-gray-400"
               >
                 Cancel
               </button>

@@ -60,83 +60,11 @@ const Hero = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
-           
-
-            {/* Latest Courses */}
-            <section className="mt-12 mb-12">
-                <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">Latest Courses</h2>
-                {latestCourses.length === 0 ? (
-                    <p className="text-center text-gray-600">No latest courses available.</p>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {latestCourses.map(course => (
-                            <motion.div
-                                key={course.id}
-                                initial={{ opacity: 0, y: 50 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, amount: 0.2 }}
-                                transition={{ duration: 0.6 }}
-                                className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
-                            >
-                                <img
-                                    src={course.imageURL || "https://placehold.co/300x200/ECECEC/000000?text=Course+Image"}
-                                    alt={course.courseTitle}
-                                    className="w-full h-48 object-cover"
-                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/300x200/ECECEC/000000?text=Course+Image" }}
-                                />
-                                <div className="p-6">
-                                    <h3 className="text-2xl font-semibold text-gray-800 mb-2">{course.courseTitle}</h3>
-                                    <p className="text-gray-600 text-sm mb-3">Added: {new Date(course.timestamp).toLocaleDateString()}</p>
-                                    <p className="text-gray-700 mb-4">{course.shortDescription}</p>
-                                    <Link to={`/course/${course.id}`} className="inline-block bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-full font-semibold transition duration-300 shadow-md">
-                                        View Details
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                )}
-            </section>
-            <section>
+        <div className="container mx-auto mt-12 mb-12 px-4 py-8">                  
+            <section className='mt-2 mb-2   px-4 py-8'>
                 <Courses />
-            </section>
-            {/* Popular Courses */}
-            <section className="mb-12">
-                <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">Popular Courses</h2>
-                {popularCourses.length === 0 ? (
-                    <p className="text-center text-gray-600">No popular courses available.</p>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {popularCourses.map(course => (
-                            <motion.div
-                                key={`popular-${course.id}`}
-                                initial={{ opacity: 0, y: 50 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, amount: 0.2 }}
-                                transition={{ duration: 0.6 }}
-                                className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
-                            >
-                                <img
-                                    src={course.imageURL || "https://placehold.co/300x200/ECECEC/000000?text=Course+Image"}
-                                    alt={course.courseTitle}
-                                    className="w-full h-48 object-cover"
-                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/300x200/ECECEC/000000?text=Course+Image" }}
-                                />
-                                <div className="p-6">
-                                    <h3 className="text-2xl font-semibold text-gray-800 mb-2">{course.courseTitle}</h3>
-                                    <p className="text-gray-600 text-sm mb-3">Added: {new Date(course.timestamp).toLocaleDateString()}</p>
-                                    <p className="text-gray-700 mb-4">{course.shortDescription}</p>
-                                    <Link to={`/course/${course.id}`} className="inline-block bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-full font-semibold transition duration-300 shadow-md">
-                                        View Details
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                )}
-            </section>
-
+            </section>           
+          
             {/* Why Choose Section */}
             <section className="mb-12 bg-blue-700 text-white p-8 rounded-lg shadow-xl">
                 <h2 className="text-4xl font-bold text-center mb-6">Why Choose CourseHub?</h2>
@@ -178,9 +106,9 @@ const Hero = () => {
             </section>
 
             {/* CTA Section */}
-            <section className="bg-white p-8 rounded-lg shadow-xl">
-                <h2 className="text-4xl font-bold text-center text-gray-800 mb-6">Join Our Community</h2>
-                <p className="text-center text-gray-600 max-w-3xl mx-auto mb-8">
+            <section className=" p-8 rounded-lg shadow-xl">
+                <h2 className="text-4xl font-bold text-center mb-6">Join Our Community</h2>
+                <p className="text-center max-w-3xl mx-auto mb-8">
                     Connect with fellow learners, share knowledge, and grow together in a supportive environment.
                 </p>
                 <div className="flex justify-center">
@@ -190,7 +118,7 @@ const Hero = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, amount: 0.5 }}
                             transition={{ duration: 0.5 }}
-                            className="bg-yellow-400 text-blue-800 hover:bg-yellow-300 px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition duration-300"
+                            className="bg-yellow-400 text-blue-500 hover:bg-yellow-300 px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition duration-300"
                         >
                             Sign Up Today!
                         </motion.button>

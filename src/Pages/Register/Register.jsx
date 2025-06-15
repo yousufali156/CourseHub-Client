@@ -106,9 +106,9 @@ const Register = () => {
         </div>
 
         {/* Register Card */}
-        <div className="card w-full max-w-sm bg-white/90 shadow-xl backdrop-blur-md rounded-xl">
+        <div className="card w-full max-w-sm bg-base-300/90 shadow-xl backdrop-blur-md rounded-xl">
           <div className="card-body p-5">
-            <h1 className="text-4xl font-extrabold text-blue-700 mb-6 text-center">
+            <h1 className="text-4xl font-extrabold text-blue-500 mb-6 text-center">
               Create Account
             </h1>
 
@@ -160,7 +160,7 @@ const Register = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-base-300"
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
@@ -181,7 +181,7 @@ const Register = () => {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-600"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-base-300"
                   >
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>

@@ -40,12 +40,22 @@ const AboutTeamPage = () => {
     }, [currentIndex]);
 
     return (
-        <div className=" bg-gray-100 flex flex-col items-center justify-center overflow-hidden relative py-10">
+        <div className=" flex flex-col items-center justify-center overflow-hidden relative py-10">
 
 
-            <h1 className="text-[4rem] md:text-[7.5rem] font-black uppercase tracking-tight absolute top-[1024px] left-1/2 -translate-x-1/2 text-transparent bg-clip-text bg-gradient-to-b from-[rgba(8,42,123,0.35)] to-transparent pointer-events-none whitespace-nowrap">
+            <h1 className="text-[4rem] text-green-400 md:text-[7.5rem] absolute top-[1024px] left-1/2 -translate-x-1/2 ">
                 OUR TEAM
             </h1>
+
+            <div className="relative text-center my-10">
+                <div className="text-4xl text-blue-600 dark:text-blue-400 font-bold relative inline-block">
+                    <div className="text-2xl mb-1 animate-bounce">↑</div>
+                    <h1 className="uppercase tracking-widest border-t-2 border-blue-400 pt-3">
+                        Upper Line Hidden Text
+                    </h1>
+                </div>
+            </div>
+
 
             <div
                 className="relative w-[80%] max-w-[1200px] h-[450px] perspective-[1000px] mt-0"
@@ -66,7 +76,7 @@ const AboutTeamPage = () => {
 
                     {teamMembers.map((member, index) => {
                         const offset = (index - currentIndex + teamMembers.length) % teamMembers.length;
-                        let style = "absolute w-[280px] h-[380px] bg-white rounded-2xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]";
+                        let style = "absolute w-[280px] h-[380px] bg-base-300 rounded-2xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]";
 
                         let transformClass = "";
                         let extraClasses = "";
@@ -111,12 +121,12 @@ const AboutTeamPage = () => {
             </div>
 
             <div className="text-center mt-10 transition-all duration-500">
-                <h2 className="text-blue-900 text-3xl md:text-4xl font-bold relative inline-block mb-2">
+                <h2 className="text-blue-500 text-3xl md:text-4xl font-bold relative inline-block mb-2">
                     {teamMembers[currentIndex].name}
-                    <span className="absolute w-[100px] h-[2px] bg-blue-900 top-full -left-[120px] hidden md:block" />
-                    <span className="absolute w-[100px] h-[2px] bg-blue-900 top-full -right-[120px] hidden md:block" />
+                    <span className="absolute w-[100px] h-[2px] bg-blue-500 top-full -left-[120px] hidden md:block" />
+                    <span className="absolute w-[100px] h-[2px] bg-blue-500 top-full -right-[120px] hidden md:block" />
                 </h2>
-                <p className="text-gray-500 text-xl md:text-2xl uppercase tracking-widest mt-[-10px]">
+                <p className=" text-xl md:text-2xl uppercase tracking-widest mt-[-10px]">
                     {teamMembers[currentIndex].role}
                 </p>
             </div>

@@ -77,7 +77,7 @@ const res = await axios.get(`http://localhost:3000/courses/${id}`);
     }
   };
 
-  if (loading) return <div className="text-center py-10 text-lg text-gray-600">Loading...</div>;
+  if (loading) return <div className="text-center py-10 text-lg text-base-300">Loading...</div>;
 
   return (
     <div className="max-w-2xl mx-auto p-8 rounded-lg shadow-md mt-10 border border-gray-200 bg-gradient-to-r from-[#7DD6F6] to-[#797EF6]">
@@ -120,7 +120,7 @@ const InputField = ({ id, icon: Icon, type, value, onChange, label }) => (
       <input
         id={id}
         type={type}
-        className="w-full px-4 pl-10 py-3 rounded-lg border border-gray-300 text-lg text-gray-800"
+        className="w-full px-4 pl-10 py-3 rounded-lg border border-gray-300 text-lg text-base-300"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required
@@ -137,7 +137,7 @@ const TextAreaField = ({ id, icon: Icon, value, onChange, label }) => (
       <textarea
         id={id}
         rows={3}
-        className="w-full px-4 pl-10 py-3 rounded-lg border border-gray-300 text-lg text-gray-800"
+        className="w-full px-4 pl-10 py-3 rounded-lg border border-gray-300 text-lg text-base-300"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required

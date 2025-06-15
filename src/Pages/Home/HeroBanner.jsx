@@ -77,10 +77,10 @@ const HeroBanner = () => {
     }, [currentIndex]);
 
     return (
-        <div className="bg-gray-100 flex flex-col items-center justify-center overflow-hidden relative py-10">
+        <div className="bg-base-300 flex flex-col items-center justify-center rounded-4xl container mx-auto overflow-hidden relative py-6">
 
             <div
-                className="relative w-[80%] max-w-[1200px] h-[450px] perspective-[1000px] mt-0"
+                className="relative w-[80%] max-w-[1200px] h-[400px] perspective-[1000px] mt-0"
                 onTouchStart={(e) => (touchStartX.current = e.changedTouches[0].screenX)}
                 onTouchEnd={(e) => {
                     touchEndX.current = e.changedTouches[0].screenX;
@@ -97,7 +97,7 @@ const HeroBanner = () => {
                 <div className="relative w-full h-full flex justify-center items-center transform-style-3d transition-transform duration-[800ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]">
                     {heroData.map((item, index) => {
                         const offset = (index - currentIndex + heroData.length) % heroData.length;
-                        let style = "absolute w-[280px] h-[380px] bg-white rounded-2xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]";
+                        let style = "absolute w-[280px] h-[380px] bg-base-300 rounded-2xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]";
                         let transformClass = "";
                         let extraClasses = "";
 
@@ -140,19 +140,19 @@ const HeroBanner = () => {
             </div>
 
             <div className="text-center mt-10 transition-all duration-500">
-                <h2 className="text-blue-900 text-3xl md:text-4xl font-bold mb-2">
+                <h2 className="text-blue-500 text-3xl md:text-4xl font-bold mb-5">
                     {heroData[currentIndex].title}
                 </h2>
-                <p className="text-gray-500 text-xl md:text-2xl mt-[-10px]">
+                <p className=" text-xl md:text-2xl mt-[-10px]">
                     {heroData[currentIndex].desc}
                 </p>
             </div>
 
-            <div className="flex justify-center gap-3 mt-10">
+            <div className="flex justify-center gap-3 mt-5">
                 {heroData.map((_, index) => (
                     <div
                         key={index}
-                        className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${index === currentIndex ? 'bg-blue-900 scale-125' : 'bg-[rgba(8,42,123,0.2)]'}`}
+                        className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${index === currentIndex ? 'bg-blue-500 scale-125' : 'bg-[rgba(8,42,123,0.2)]'}`}
                         onClick={() => updateCarousel(index)}
                     />
                 ))}
