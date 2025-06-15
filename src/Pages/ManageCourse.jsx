@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Edit, Trash2, Info } from 'react-feather';
 import AuthContext from '../FirebaseAuthContext/AuthContext';

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import axios from 'axios';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
+  const [popularCourses, setPopularCourses] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
+    // Fetch all courses
     fetch('http://localhost:3000/courses')
       .then(res => res.json())
       .then(data => {
@@ -13,6 +16,11 @@ const Courses = () => {
         setCourses(sorted);
       })
       .catch(error => console.error("❌ Error fetching courses:", error));
+
+    // Fetch popular courses (based on enrollment count)
+    axios.get('http://localhost:3000/popular-courses')
+      .then(res => setPopularCourses(res.data))
+      .catch(err => console.error("❌ Error fetching popular courses:", err));
   }, []);
 
   const visibleCourses = showAll ? courses : courses.slice(0, 6);
@@ -69,13 +77,28 @@ const Courses = () => {
 
         <div className="bg-white shadow rounded-lg p-4">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold">Popular Courses</h3>
+            <h3 className="text-lg font-bold"> 🔹 Popular Courses</h3>
             <Link to="/popular" className="text-blue-600 text-sm hover:underline">View All</Link>
           </div>
+
           <div className="space-y-3">
-            <div className="w-full h-4 bg-gray-200 rounded"></div>
-            <div className="w-full h-4 bg-gray-200 rounded"></div>
-            <div className="w-full h-4 bg-gray-200 rounded"></div>
+            {popularCourses.length > 0 ? (
+              popularCourses.slice(0, 3).map(course => (
+                <Link
+                  to={`/course-details/${course._id}`}
+                  key={course._id}
+                  className="block text-sm text-blue-600 hover:underline"
+                >
+                  {course.courseTitle}
+                </Link>
+              ))
+            ) : (
+              <>
+                <div className="w-full h-4 bg-gray-200 rounded"></div>
+                <div className="w-full h-4 bg-gray-200 rounded"></div>
+                <div className="w-full h-4 bg-gray-200 rounded"></div>
+              </>
+            )}
           </div>
         </div>
       </div>

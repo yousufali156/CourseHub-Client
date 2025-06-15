@@ -1,49 +1,30 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import {
-  collection, addDoc, deleteDoc, doc, getDoc, getDocs, query,
-  where, updateDoc, Timestamp
-} from 'firebase/firestore';
-import { toast } from 'react-hot-toast';
+import { useParams, useNavigate } from 'react-router-dom';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
+import Swal from 'sweetalert2';
 import NotFoundCourse from '../Components/NotFoundCourse';
+import axios from 'axios';
 
 const CourseDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, db, userId, loading: authLoading } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const [course, setCourse] = useState(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [enrolled, setEnrolled] = useState(false);
-  const [checkingEnrollment, setCheckingEnrollment] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
-  const [reviewText, setReviewText] = useState('');
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviews, setReviews] = useState([]);
-  const [avgRating, setAvgRating] = useState(0);
+  const [userEnrollCount, setUserEnrollCount] = useState(0);
 
-  const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-  // Fetch Course
+  // ✅ Fetch course by ID
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await fetch('http://localhost:3000/courses');
-        const data = await res.json();
-        const matchedCourse = data.find(
-          (c) => c._id === id || c._id?.$oid === id
-        );
-        if (!matchedCourse) {
-          navigate('/404');
-        } else {
-          setCourse({
-            ...matchedCourse,
-            _id: matchedCourse._id?.$oid || matchedCourse._id,
-          });
-        }
+        const res = await axios.get(`http://localhost:3000/courses/${id}`);
+        setCourse(res.data);
       } catch (err) {
         console.error('Error fetching course:', err);
+        navigate('/404');
       } finally {
         setPageLoading(false);
       }
@@ -51,134 +32,108 @@ const CourseDetailsPage = () => {
     fetchCourse();
   }, [id, navigate]);
 
-  // Check Enrollment
+  // ✅ Check if user is already enrolled + how many total courses enrolled
   useEffect(() => {
     const checkEnrollment = async () => {
-      if (user && db && course) {
-        const q = query(
-          collection(db, `artifacts/${appId}/users/${userId}/enrollments`),
-          where('courseId', '==', course._id)
-        );
-        const snapshot = await getDocs(q);
-        setEnrolled(!snapshot.empty);
+      if (user) {
+        try {
+          const res = await axios.get(`http://localhost:3000/my-enrolled-courses/${user.email}`);
+          setUserEnrollCount(res.data.length);
+          const alreadyEnrolled = res.data.find(e => e.courseId === id);
+          setEnrolled(!!alreadyEnrolled);
+        } catch (err) {
+          console.error('Error checking enrollment:', err);
+        }
       }
-      setCheckingEnrollment(false);
     };
     checkEnrollment();
-  }, [user, db, course, userId, appId]);
+  }, [user, id]);
 
-  // Fetch Reviews
-  const fetchReviews = async () => {
-    if (!course || !db) return;
-    const q = query(
-      collection(db, `artifacts/${appId}/reviews`),
-      where('courseId', '==', course._id)
-    );
-    const snapshot = await getDocs(q);
-    const fetched = snapshot.docs.map((doc) => doc.data());
-    setReviews(fetched);
-    const total = fetched.reduce((sum, r) => sum + r.rating, 0);
-    setAvgRating(fetched.length ? (total / fetched.length).toFixed(1) : 0);
-  };
-
-  useEffect(() => {
-    fetchReviews();
-  }, [course, db]);
-
-  const handleEnroll = async () => {
-    if (!user || !db || enrolled || course.seats <= 0) return;
+  // ✅ Enroll / Unenroll Handler
+  const handleEnrollToggle = async () => {
+    if (!user || enrolling) return;
 
     try {
       setEnrolling(true);
 
-      // Check user max enroll
-      const enrollRef = collection(db, `artifacts/${appId}/users/${userId}/enrollments`);
-      const snapshot = await getDocs(enrollRef);
-      if (snapshot.size >= 3) {
-        toast.error('You can enroll in a maximum of 3 courses.');
+      // 🔻 If already enrolled → UNENROLL
+      if (enrolled) {
+        await axios.delete(`http://localhost:3000/enrollments`, {
+          data: { userEmail: user.email, courseId: id }
+        });
+
+        await axios.patch(`http://localhost:3000/courses/${id}/seats`, {
+          seats: course.seats + 1
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Unenrolled Successfully!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+
+        setEnrolled(false);
+        setCourse(prev => ({ ...prev, seats: prev.seats + 1 }));
+        setUserEnrollCount(prev => prev - 1);
         return;
       }
 
-      await addDoc(enrollRef, {
-        courseId: course._id,
+      // 🔺 If not enrolled → ENROLL
+      if (course.seats <= 0) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'No Seats Left',
+          text: 'This course is full!',
+        });
+      }
+
+      if (userEnrollCount >= 3) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'Limit Reached',
+          text: 'You cannot enroll in more than 3 courses.',
+        });
+      }
+
+      await axios.post('http://localhost:3000/enrollments', {
+        courseId: id,
         courseTitle: course.courseTitle,
         userEmail: user.email,
-        enrollmentDate: Timestamp.now(),
       });
 
-      const courseRef = doc(db, `artifacts/${appId}/public/data/courses`, course._id);
-      await updateDoc(courseRef, { seats: course.seats - 1 });
+      await axios.patch(`http://localhost:3000/courses/${id}/seats`, {
+        seats: course.seats - 1
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Enrolled Successfully!',
+        showConfirmButton: false,
+        timer: 1500,
+      });
 
       setEnrolled(true);
-      setCourse((prev) => ({ ...prev, seats: prev.seats - 1 }));
-      toast.success('Enrolled successfully!');
+      setCourse(prev => ({ ...prev, seats: prev.seats - 1 }));
+      setUserEnrollCount(prev => prev + 1);
+
+      // Redirect to My Enrolled Courses
+      setTimeout(() => {
+        navigate('/my-enrolled-courses');
+      }, 1600);
     } catch (err) {
-      console.error('Enrollment failed:', err);
-      toast.error('Enrollment failed.');
+      console.error('Enrollment error:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Enrollment Failed',
+        text: err?.response?.data?.error || 'Something went wrong',
+      });
     } finally {
       setEnrolling(false);
     }
   };
 
-  const handleUnenroll = async () => {
-    if (!user || !db || !enrolled) return;
-
-    try {
-      const q = query(
-        collection(db, `artifacts/${appId}/users/${userId}/enrollments`),
-        where('courseId', '==', course._id)
-      );
-      const snapshot = await getDocs(q);
-      const docToDelete = snapshot.docs[0];
-      await deleteDoc(docToDelete.ref);
-
-      const courseRef = doc(db, `artifacts/${appId}/public/data/courses`, course._id);
-      await updateDoc(courseRef, { seats: course.seats + 1 });
-
-      setEnrolled(false);
-      setCourse((prev) => ({ ...prev, seats: prev.seats + 1 }));
-      toast.success('Unenrolled successfully!');
-    } catch (err) {
-      console.error('Unenroll failed:', err);
-      toast.error('Unenroll failed.');
-    }
-  };
-
-  const handleSubmitReview = async () => {
-    if (!user || !db || !reviewText.trim()) return;
-
-    try {
-      const reviewRef = collection(db, `artifacts/${appId}/reviews`);
-      const q = query(reviewRef, where('userId', '==', userId), where('courseId', '==', course._id));
-      const existing = await getDocs(q);
-      if (!existing.empty) {
-        toast.error('You already submitted a review for this course.');
-        return;
-      }
-
-      await addDoc(reviewRef, {
-        userId,
-        userEmail: user.email,
-        courseId: course._id,
-        rating: reviewRating,
-        comment: reviewText,
-        timestamp: Timestamp.now(),
-      });
-
-      toast.success('Review submitted!');
-      setReviewText('');
-      setReviewRating(5);
-      fetchReviews();
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to submit review.');
-    }
-  };
-
-  if (pageLoading || authLoading || checkingEnrollment) {
-    return <div className="text-center text-lg py-10 text-gray-600">Loading course details...</div>;
-  }
-
+  if (pageLoading) return <div className="text-center py-10 text-gray-600">Loading course details...</div>;
   if (!course) return <NotFoundCourse />;
 
   return (
@@ -200,8 +155,7 @@ const CourseDetailsPage = () => {
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-800 mb-6">
               <p><strong>Instructor:</strong> {course.instructorName}</p>
               <p><strong>Duration:</strong> {course.duration}</p>
-              <p><strong>Seats Left:</strong> {course.seats}</p>
-              <p><strong>Rating:</strong> {avgRating} ⭐</p>
+              <p><strong>Seats Left:</strong> {course.seats > 0 ? course.seats : 'No Seats Left'}</p>
             </div>
 
             <h2 className="text-2xl font-semibold text-gray-800 mb-2">Course Overview</h2>
@@ -209,62 +163,30 @@ const CourseDetailsPage = () => {
           </div>
 
           <div className="mt-6">
-            {enrolled ? (
-              <button
-                onClick={handleUnenroll}
-                className="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Unenroll
-              </button>
-            ) : (
-              <button
-                onClick={handleEnroll}
-                disabled={!user || enrolling || enrolled || course.seats <= 0}
-                className={`px-6 py-2 text-white rounded
-                  ${enrolling || !user || course.seats <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-              >
-                {!user ? 'Login to Enroll' : enrolling ? 'Enrolling...' : 'Enroll Now'}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Review Section */}
-      <div className="mt-12 text-center">
-        <h3 className="text-2xl font-bold mb-4">Course Reviews</h3>
-        {reviews.map((r, i) => (
-          <div key={i} className="border p-4 mb-3 rounded max-w-2xl mx-auto">
-            <p className="font-semibold">{r.userEmail} <span className="text-yellow-500">({r.rating}⭐)</span></p>
-            <p className="text-gray-700">{r.comment}</p>
-          </div>
-        ))}
-
-        {user && enrolled && (
-          <div className="mt-6 max-w-xl mx-auto">
-            <h4 className="font-semibold text-lg mb-2">Leave a Review</h4>
-            <div className="mb-2">
-              <label className="mr-2">Rating: </label>
-              <select value={reviewRating} onChange={(e) => setReviewRating(Number(e.target.value))}>
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={n}>{n} Star</option>
-                ))}
-              </select>
-            </div>
-            <textarea
-              className="w-full border rounded p-2 mb-2"
-              placeholder="Write your comment..."
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-            />
             <button
-              onClick={handleSubmitReview}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              onClick={handleEnrollToggle}
+              disabled={!user || enrolling}
+              className={`px-6 py-2 text-white rounded transition-all duration-200
+                ${!user || enrolling
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : enrolled
+                  ? 'bg-red-600 hover:bg-red-700'
+                  : course.seats <= 0
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700'}`}
             >
-              Submit Review
+              {!user
+                ? 'Login to Enroll'
+                : enrolling
+                ? 'Processing...'
+                : enrolled
+                ? 'Unenroll'
+                : course.seats <= 0
+                ? 'No Seats Left'
+                : 'Enroll Now'}
             </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

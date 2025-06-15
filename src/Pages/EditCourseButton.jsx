@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { BookOpen, Image, Clock, Users, Calendar, FileText } from 'lucide-react';
 import axios from 'axios';
@@ -22,7 +22,7 @@ const EditCourseButton = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/course/${id}`);
+const res = await axios.get(`http://localhost:3000/courses/${id}`);
         const data = res.data;
         setCourseTitle(data.courseTitle);
         setShortDescription(data.shortDescription);

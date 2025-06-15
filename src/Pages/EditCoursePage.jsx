@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import { BookOpen, Text, Clock, Users, Edit, Image as LucideImageIcon } from 'lucide-react';

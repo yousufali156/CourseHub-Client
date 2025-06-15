@@ -1,97 +1,81 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router';
-import { XCircle } from 'lucide-react';
-import AuthContext from '../FirebaseAuthContext/AuthContext';
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  updateDoc,
-  where
-} from 'firebase/firestore';
-import { toast } from 'react-hot-toast';
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import { Link } from "react-router";
+import { toast } from "react-hot-toast";
+import { XCircle } from "lucide-react";
+import AuthContext from "../FirebaseAuthContext/AuthContext";
 
 const MyEnrolledCourses = () => {
-  const { user, db, loading: authLoading, userId } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
-  const [enrollmentToRemove, setEnrollmentToRemove] = useState(null);
-
-  const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+  const [selectedEnrollment, setSelectedEnrollment] = useState(null);
 
   useEffect(() => {
-    if (!authLoading && user && db) {
-      setLoading(true);
+    if (!user?.email) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchEnrollments = async () => {
       try {
-        const enrollmentsRef = collection(db, `artifacts/${appId}/users/${userId}/enrollments`);
-        const q = query(enrollmentsRef, where("userEmail", "==", user.email));
-
-        const unsubscribe = onSnapshot(
-          q,
-          (snapshot) => {
-            const fetchedEnrollments = snapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            }));
-            setEnrolledCourses(fetchedEnrollments);
-            setLoading(false);
-          },
-          (error) => {
-            console.error("Error fetching enrolled courses:", error);
-            toast.error("Failed to load your enrolled courses.");
-            setLoading(false);
-          }
+        const res = await axios.get(
+          `http://localhost:3000/my-enrolled-courses/${user.email}`
         );
-
-        return () => unsubscribe();
+        setEnrolledCourses(res.data);
       } catch (error) {
-        console.error("Error setting up Firestore listener:", error);
-        toast.error("Failed to set up real-time enrollment updates.");
+        console.error("Failed to load enrollments", error);
+        toast.error("Failed to load your enrolled courses.");
+      } finally {
         setLoading(false);
       }
-    } else {
-      setLoading(false);
-    }
-  }, [user, db, authLoading, userId]);
+    };
 
-  const handleRemoveClick = (enrollment) => {
-    setEnrollmentToRemove(enrollment);
-    setShowRemoveModal(true);
-  };
+    fetchEnrollments();
+  }, [user]);
 
-  const confirmRemoveEnrollment = async () => {
-    if (!enrollmentToRemove || !db) return;
-    setLoading(true);
+  const handleRemoveEnrollment = async () => {
+    if (!selectedEnrollment) return;
+
     try {
-      await deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/enrollments`, enrollmentToRemove.id));
-
-      const courseRef = doc(db, `artifacts/${appId}/public/data/courses`, enrollmentToRemove.courseId);
-      const courseSnap = await getDoc(courseRef);
-      if (courseSnap.exists()) {
-        const currentSeats = courseSnap.data().seats || 0;
-        await updateDoc(courseRef, {
-          seats: currentSeats + 1
-        });
-      }
-
-      toast.success(`Enrollment for "${enrollmentToRemove.courseTitle}" removed successfully!`);
+      await axios.delete(`http://localhost:3000/enrollments/${selectedEnrollment._id}`);
+      toast.success("Enrollment removed successfully");
+      setEnrolledCourses((prev) =>
+        prev.filter((e) => e._id !== selectedEnrollment._id)
+      );
       setShowRemoveModal(false);
-      setEnrollmentToRemove(null);
     } catch (error) {
-      console.error("Error removing enrollment:", error);
-      toast.error("Failed to remove enrollment.");
-    } finally {
-      setLoading(false);
+      console.error("Failed to remove enrollment", error);
+      toast.error("Failed to remove enrollment");
     }
   };
 
-  if (authLoading || loading) {
-    return null; // or return <LoadingSpinner />;
+ const formatEnrollmentDate = (rawDate) => {
+  if (!rawDate) return 'N/A';
+
+  // Handle YYYY-MM-DD format (like "2025-02-05")
+  if (typeof rawDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+    rawDate += 'T00:00:00'; // Add time to make it ISO-compatible
   }
+
+  const parsedDate = new Date(rawDate);
+
+  if (isNaN(parsedDate.getTime())) return 'N/A';
+
+  return parsedDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+
+
+
+
+
+
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
 
   return (
     <div className="container mx-auto p-6 my-8 bg-white rounded-lg shadow-xl border border-gray-200">
@@ -108,7 +92,10 @@ const MyEnrolledCourses = () => {
       {enrolledCourses.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-gray-600 text-lg mb-4">You haven't enrolled in any courses yet.</p>
-          <Link to="/courses" className="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300 shadow-md">
+          <Link
+            to="/courses"
+            className="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300 shadow-md"
+          >
             Browse Courses
           </Link>
         </div>
@@ -129,24 +116,31 @@ const MyEnrolledCourses = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {enrolledCourses.map((enrollment) => (
-                <tr key={enrollment.id} className="hover:bg-gray-50">
+              {enrolledCourses.map((enroll) => (
+                <tr key={enroll._id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <Link to={`/course/${enrollment.courseId}`} className="text-blue-600 hover:underline">
-                      {enrollment.courseTitle}
+                    <Link to={`/course/${enroll.courseId}`} className="text-blue-600 hover:underline">
+                      {enroll.courseTitle}
                     </Link>
                   </td>
 
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    Enrolled on: {enrollment.enrollmentDate?.toDate().toLocaleDateString()}
+                  <td>
+                    <p className="text-gray-500">
+                      Enrolled on: {formatEnrollmentDate(enroll.timestamp)}
+                    </p>
+
+
+
                   </td>
 
 
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
-                      onClick={() => handleRemoveClick(enrollment)}
+                      onClick={() => {
+                        setSelectedEnrollment(enroll);
+                        setShowRemoveModal(true);
+                      }}
                       className="text-red-600 hover:text-red-900 bg-red-100 p-2 rounded-full transition duration-300 hover:bg-red-200 flex items-center space-x-1"
-                      title="Remove Enrollment"
                     >
                       <XCircle size={20} /> <span>Remove</span>
                     </button>
@@ -164,7 +158,8 @@ const MyEnrolledCourses = () => {
             <XCircle className="text-red-500 mx-auto mb-4" size={48} />
             <h3 className="text-xl font-bold text-gray-800 mb-4">Confirm Removal</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to remove your enrollment from "<span className="font-semibold">{enrollmentToRemove?.courseTitle}</span>"?
+              Are you sure you want to remove your enrollment from <br />
+              <span className="font-semibold">{selectedEnrollment?.courseTitle}</span>?
             </p>
             <div className="flex justify-center space-x-4">
               <button
@@ -174,11 +169,10 @@ const MyEnrolledCourses = () => {
                 Cancel
               </button>
               <button
-                onClick={confirmRemoveEnrollment}
-                className="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={loading}
+                onClick={handleRemoveEnrollment}
+                className="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition duration-300"
               >
-                {loading ? 'Removing...' : 'Remove'}
+                Remove
               </button>
             </div>
           </div>
