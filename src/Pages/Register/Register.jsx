@@ -43,16 +43,16 @@ const Register = () => {
 
     if (!passwordRegex.test(password)) {
       return setError(
-        'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.'
+        'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে এবং এতে ১টি বড় হাতের অক্ষর, ১টি ছোট হাতের অক্ষর, ১টি সংখ্যা ও ১টি স্পেশাল ক্যারেক্টার থাকতে হবে।'
       );
     }
 
     if (password.includes(email)) {
-      return setError('Password should not contain your email address.');
+      return setError('পাসওয়ার্ডে ইমেইল অ্যাড্রেস থাকা উচিত না।');
     }
 
     if (password !== confirmPassword) {
-      return setError('Passwords do not match.');
+      return setError('Password এবং Confirm Password মিলছে না।');
     }
 
     try {
@@ -69,9 +69,10 @@ const Register = () => {
       );
 
       await sendTokenToServer(idToken);
-      navigate(from, { replace: true });
+
+      navigate(from, { replace: true }); // ✅ Register সফল হলে আগের পেজ বা Homepage
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Registration failed.');
     }
   };
 
@@ -91,7 +92,7 @@ const Register = () => {
       );
 
       await sendTokenToServer(idToken);
-      navigate(from, { replace: true });
+      navigate(from, { replace: true }); // ✅ রিডাইরেক্ট
     } catch (err) {
       setError(err.message || 'Social login failed.');
     }
@@ -100,12 +101,10 @@ const Register = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-500 to-purple-600 p-6">
       <div className="flex flex-col-reverse lg:flex-row items-center gap-10 w-full max-w-6xl">
-        {/* Animation */}
         <div className="w-full max-w-md lg:max-w-lg">
           <Lottie animationData={RegisterLottie} loop />
         </div>
 
-        {/* Register Card */}
         <div className="card w-full max-w-sm bg-base-300/90 shadow-xl backdrop-blur-md rounded-xl">
           <div className="card-body p-5">
             <h1 className="text-4xl font-extrabold text-blue-500 mb-6 text-center">
@@ -146,7 +145,6 @@ const Register = () => {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label className="label text-blue-400 mb-2 font-medium">Password</label>
                 <div className="relative">
@@ -167,7 +165,6 @@ const Register = () => {
                 </div>
               </div>
 
-              {/* Confirm Password */}
               <div>
                 <label className="label text-blue-400 mb-2 font-medium">Confirm Password</label>
                 <div className="relative">
@@ -198,26 +195,26 @@ const Register = () => {
               </button>
             </form>
 
-            {/* Divider */}
             <div className="divider text-blue-400 font-medium">OR</div>
 
-            {/* Social Login */}
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => handleSocialLogin('google')}
-                className="btn btn-outline w-full flex items-center gap-2"
+                className="btn btn-outline w-full flex items-center gap-2 bg-blue-500 hover:text-base-300 transition"
               >
-                <FaGoogle className="text-lg" /> Continue with Google
+                <FaGoogle className="text-lg " /> Continue with Google
               </button>
+
               <button
                 onClick={() => handleSocialLogin('github')}
-                className="btn btn-outline w-full flex items-center gap-2"
+                className="btn btn-outline w-full flex items-center gap-2 hover:text-red-600 transition"
               >
                 <FaGithub className="text-lg" /> Continue with GitHub
               </button>
             </div>
 
-            {/* Login Redirect */}
+
+
             <div className="mt-2 text-center">
               <p className="text-sm text-blue-400">
                 Already have an account?{' '}

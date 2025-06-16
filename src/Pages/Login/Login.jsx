@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import { FaEye, FaEyeSlash, FaGoogle, FaGithub } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 import RegisterLottie from '../../assets/Animation/Signup Animation.json';
 import AuthContext from '../../FirebaseAuthContext/AuthContext';
 
@@ -22,9 +23,11 @@ const Login = () => {
 
     try {
       await signInUser(email, password);
+      toast.success('Login Successful!');
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Login failed.');
+      toast.error(err.message || 'Login failed.');
     }
   };
 
@@ -35,9 +38,11 @@ const Login = () => {
       } else if (provider === 'github') {
         await signInWithGithub();
       }
+      toast.success('Login Successful!');
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Social login failed.');
+      toast.error(err.message || 'Social login failed.');
     }
   };
 
@@ -57,6 +62,7 @@ const Login = () => {
             </h1>
 
             <form onSubmit={handleLogin} className="space-y-4">
+              {/* Email Field */}
               <div>
                 <label htmlFor="email" className="label text-blue-400 mb-2 font-medium">
                   Email
@@ -70,6 +76,7 @@ const Login = () => {
                 />
               </div>
 
+              {/* Password Field */}
               <div>
                 <label htmlFor="password" className="label text-blue-400 mb-2 font-medium">
                   Password
@@ -99,10 +106,12 @@ const Login = () => {
                 </a>
               </div>
 
+              {/* Error Message */}
               {error && (
                 <p className="text-sm text-red-600 font-medium mt-2">{error}</p>
               )}
 
+              {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full py-2 mt-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:opacity-90 transition duration-300"
@@ -114,17 +123,18 @@ const Login = () => {
             {/* Divider */}
             <div className="divider text-purple-500 font-medium">OR</div>
 
-            {/* Social Login Buttons */}
-            <div className="flex flex-col gap-3">
+            {/* Social Login */}
+            <div className="flex flex-col gap-2">
               <button
                 onClick={() => handleSocialLogin('google')}
-                className="btn btn-outline w-full flex items-center gap-2"
+                className="btn btn-outline w-full flex items-center gap-2 bg-blue-500 hover:text-base-300 transition"
               >
-                <FaGoogle className="text-lg" /> Continue with Google
+                <FaGoogle className="text-lg " /> Continue with Google
               </button>
+
               <button
                 onClick={() => handleSocialLogin('github')}
-                className="btn btn-outline w-full flex items-center gap-2"
+                className="btn btn-outline w-full flex items-center gap-2 hover:text-red-600 transition"
               >
                 <FaGithub className="text-lg" /> Continue with GitHub
               </button>

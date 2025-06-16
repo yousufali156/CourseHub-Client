@@ -6,7 +6,8 @@ import {
   Route,
   createRoutesFromElements,
   Outlet,
-} from 'react-router';
+} from 'react-router-dom'; // ✅ Updated from 'react-router' to 'react-router-dom'
+
 // Components & Pages
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer';
@@ -26,6 +27,8 @@ import MyCourseDetailsButton from './Pages/MyCourseDetailsButton';
 import UpcomingCourse from './Pages/Shared/UpcomingCourse';
 import PrivateRoute from './PrivateRoute/PrivateRoute';
 
+// ✅ Toast
+import { Toaster } from 'react-hot-toast';
 
 // Layout wrapper
 const AppLayout = () => (
@@ -52,26 +55,24 @@ const App = () => {
 
         <Route path="/courses" element={<Courses />} />
         <Route path="/course-details/:id" element={<PrivateRoute><CourseDetailsPage /></PrivateRoute>} />
-        <Route path="/upcoming-course" element={ <PrivateRoute> <UpcomingCourse /></PrivateRoute>} />
+        <Route path="/upcoming-course" element={<PrivateRoute><UpcomingCourse /></PrivateRoute>} />
 
-        {/* <Route
-          path="/upcoming-course"
-          element={
-            <PrivateRoute></PrivateRoute>
-          }
-        /> */}
-        
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
-        <Route path="*" element={<NotFoundCourse />} />
         <Route path="/edit-course/:id" element={<EditCourseButton />} />
         <Route path="/course/:id" element={<MyCourseDetailsButton />} />
 
+        <Route path="*" element={<NotFoundCourse />} />
       </Route>
     )
   );
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <Toaster position="top-center" reverseOrder={false} /> {/* ✅ Toast added */}
+      <RouterProvider router={router} />
+    </>
+  );
 };
 
 export default App;

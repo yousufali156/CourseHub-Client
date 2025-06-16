@@ -59,7 +59,7 @@ const Footer = () => {
             <input
               type="email"
               placeholder="Your email address"
-              className="w-full sm:w-auto flex-1 px-4 py-2 rounded-md bg-white text-base-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-auto flex-1 px-4 py-2 text-black rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             <button
@@ -72,7 +72,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="mt-8 text-center text-sm text-base-300">
+      <div className="mt-8 text-center text-sm">
         &copy; {new Date().getFullYear()} CourseHub. All rights reserved.
       </div>
     </footer>
