@@ -1,151 +1,120 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import AuthContext from '../FirebaseAuthContext/AuthContext';
-import Swal from 'sweetalert2';
-import NotFoundCourse from '../Components/NotFoundCourse';
-import axios from 'axios';
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import AuthContext from "../FirebaseAuthContext/AuthContext";
 
-const MyCourseDetailsButton = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
+const MyCourseDetailsButton = ({ courseId }) => {
   const { user } = useContext(AuthContext);
-
   const [course, setCourse] = useState(null);
-  const [pageLoading, setPageLoading] = useState(true);
-  const [enrolled, setEnrolled] = useState(false);
-  const [enrolling, setEnrolling] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/courses/${id}`);
-        setCourse(res.data);
+        const response = await axios.get(`${API_BASE_URL}/courses/${courseId}`);
+        setCourse(response.data);
       } catch (err) {
-        console.error('Error fetching course:', err);
-        navigate('/404');
+        console.error("Error fetching course:", err);
       } finally {
-        setPageLoading(false);
+        setLoading(false);
       }
     };
-    fetchCourse();
-  }, [id, navigate]);
 
-  useEffect(() => {
     const checkEnrollment = async () => {
-      if (user && course) {
+      if (user?.email) {
         try {
-          const res = await axios.get(`http://localhost:3000/enrollments?userEmail=${user.email}`);
-          const alreadyEnrolled = res.data.find(e => e.courseId === course._id);
-          if (alreadyEnrolled) setEnrolled(true);
+          const res = await axios.get(`${API_BASE_URL}/my-enrolled-courses/${user.email}`);
+          const enrolled = res.data.some((enr) => enr.courseId === courseId);
+          setIsEnrolled(enrolled);
         } catch (err) {
-          console.error('Error checking enrollment:', err);
+          console.error("Error checking enrollment:", err);
         }
       }
     };
+
+    fetchCourse();
     checkEnrollment();
-  }, [user, course]);
+  }, [courseId, user]);
 
+  const handleEnroll = async () => {
+    if (!user?.email) return;
 
+    try {
+      const res = await axios.post(`${API_BASE_URL}/enrollments`, {
+        userEmail: user.email,
+        courseId: course._id,
+        courseTitle: course.courseTitle
+      });
 
-  
-const handleEnroll = async () => {
-  if (!user || enrolled || enrolling || course.seats <= 0) return;
+      if (res.data.message === "Enrolled successfully") {
+        Swal.fire({
+          icon: "success",
+          title: "Enrolled Successfully!",
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          window.location.reload(); // ✅ Update UI
+        });
+      }
+    } catch (err) {
+      console.error("Enrollment error:", err);
+      Swal.fire("Error", err.response?.data?.error || "Enrollment failed", "error");
+    }
+  };
 
-  try {
-    setEnrolling(true);
+  const handleUnenroll = async () => {
+    if (!user?.email) return;
 
-    // Step 1: Post enrollment
-    const enrollRes = await axios.post('http://localhost:3000/enrollments', {
-      courseId: course._id,
-      courseTitle: course.courseTitle,
-      userEmail: user.email,
-    });
+    try {
+      const res = await axios.delete(`${API_BASE_URL}/enrollments`, {
+        data: { userEmail: user.email, courseId: course._id }
+      });
 
-    // Step 2: Update seat
-    await axios.patch(`http://localhost:3000/courses/${course._id}/seats`, {
-      seats: course.seats - 1,
-    });
+      if (res.data.message === "Unenrolled successfully and seat count updated") {
+        Swal.fire({
+          icon: "success",
+          title: "Unenrolled!",
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          window.location.reload(); // ✅ Update UI
+        });
+      }
+    } catch (err) {
+      console.error("Unenroll error:", err);
+      Swal.fire("Error", err.response?.data?.error || "Unenroll failed", "error");
+    }
+  };
 
-    // Step 3: Show success modal and redirect
-    Swal.fire({
-      icon: 'success',
-      title: 'Enrolled Successfully!',
-      showConfirmButton: false,
-      timer: 1500,
-    });
-
-    setTimeout(() => {
-      navigate('/my-enrolled-courses');
-    }, 1600);
-
-  } catch (err) {
-    console.error('Enrollment failed:', err);
-
-    // Optional: show specific error message from backend
-    const message = err?.response?.data?.error || 'Something went wrong';
-
-    Swal.fire({
-      icon: 'error',
-      title: 'Enrollment Failed',
-      text: message,
-    });
-  } finally {
-    setEnrolling(false);
-  }
-};
-
-
-  if (pageLoading) return <div className="text-center py-10 text-base-300">Loading course details...</div>;
-  if (!course) return <NotFoundCourse />;
+  if (loading) return <p>Loading course...</p>;
+  if (!course) return <p>Course not found</p>;
 
   return (
-  <div className="container mx-auto min-h-screen flex items-center justify-center p-6 my-8 rounded-lg shadow-xl">
-
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="lg:w-1/2">
-          <img
-            src={course.imageURL || 'https://placehold.co/600x400/ECECEC/000000?text=Course+Image'}
-            alt={course.courseTitle}
-            className="rounded-lg w-full max-h-[400px] object-cover"
-          />
-        </div>
-
-        <div className="lg:w-1/2 flex flex-col justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-blue-500 mb-4">{course.courseTitle}</h1>
-            <p className=" mb-4">{course.shortDescription}</p>
-
-            <div className="grid grid-cols-2 gap-4 text-sm  mb-6">
-              <p><strong>Instructor:</strong> {course.instructorName}</p>
-              <p><strong>Duration:</strong> {course.duration}</p>
-              <p><strong>Seats Left:</strong> {course.seats}</p>
-            </div>
-
-            <h2 className="text-2xl font-semibold  mb-2">Course Overview</h2>
-            <p className="">{course.fullDescription}</p>
-          </div>
-
-          <div className="mt-6">
-            {enrolled ? (
-              <button
-                disabled
-                className="px-6 py-2 bg-gray-400 text-white rounded cursor-not-allowed"
-              >
-                Enrolled
-              </button>
-            ) : (
-              <button
-                onClick={handleEnroll}
-                disabled={!user || enrolling || course.seats <= 0}
-                className={`px-6 py-2 text-white rounded
-                  ${enrolling || !user || course.seats <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-              >
-                {!user ? 'Login to Enroll' : enrolling ? 'Enrolling...' : 'Enroll Now'}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+    <div className="text-center mt-6">
+      {user ? (
+        isEnrolled ? (
+          <button
+            onClick={handleUnenroll}
+            className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+          >
+            Unenroll
+          </button>
+        ) : course.seats > 0 ? (
+          <button
+            onClick={handleEnroll}
+            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >
+            Enroll Now ({course.seats} seats left)
+          </button>
+        ) : (
+          <p className="text-red-600 font-medium">No seats left</p>
+        )
+      ) : (
+        <p className="text-gray-600">Please log in to enroll.</p>
+      )}
     </div>
   );
 };

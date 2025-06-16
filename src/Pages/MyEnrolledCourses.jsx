@@ -5,6 +5,8 @@ import { toast } from "react-hot-toast";
 import { XCircle } from "lucide-react";
 import AuthContext from "../FirebaseAuthContext/AuthContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
 const MyEnrolledCourses = () => {
   const { user } = useContext(AuthContext);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
@@ -20,9 +22,7 @@ const MyEnrolledCourses = () => {
 
     const fetchEnrollments = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:3000/my-enrolled-courses/${user.email}`
-        );
+        const res = await axios.get(`${API_BASE_URL}/my-enrolled-courses/${user.email}`);
         setEnrolledCourses(res.data);
       } catch (error) {
         console.error("Failed to load enrollments", error);
@@ -42,9 +42,7 @@ const MyEnrolledCourses = () => {
     }
 
     try {
-      const response = await axios.delete(
-        `http://localhost:3000/enrollments/${selectedEnrollment._id}`
-      );
+      const response = await axios.delete(`${API_BASE_URL}/enrollments/${selectedEnrollment._id}`);
       if (response.status === 200 || response.status === 204) {
         toast.success("Enrollment removed successfully");
         setEnrolledCourses((prev) =>
@@ -63,9 +61,11 @@ const MyEnrolledCourses = () => {
 
   const formatEnrollmentDate = (rawDate) => {
     if (!rawDate) return "N/A";
+
     if (typeof rawDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
-      rawDate += "T00:00:00";
+      rawDate += "T00:00:00Z";
     }
+
     const parsedDate = new Date(rawDate);
     if (isNaN(parsedDate.getTime())) return "N/A";
 
@@ -94,9 +94,7 @@ const MyEnrolledCourses = () => {
 
       {enrolledCourses.length === 0 ? (
         <div className="text-center py-10">
-          <p className=" text-lg mb-4">
-            You haven't enrolled in any courses yet.
-          </p>
+          <p className="text-lg mb-4">You haven't enrolled in any courses yet.</p>
           <Link
             to="/courses"
             className="bg-blue-500 px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300 shadow-md"
@@ -153,11 +151,11 @@ const MyEnrolledCourses = () => {
       )}
 
       {showRemoveModal && selectedEnrollment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md text-center">
+        <div className="fixed inset-0 bg-base-300 bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="rounded-lg shadow-lg p-6 border-2 bg-base-100 border-red-400 w-full max-w-md text-center">
             <XCircle className="text-red-500 mx-auto mb-4" size={48} />
             <h3 className="text-xl font-bold mb-4">Confirm Removal</h3>
-            <p className="mb-6 text-gray-700">
+            <p className="mb-6">
               Are you sure you want to remove your enrollment from <br />
               <span className="font-semibold">{selectedEnrollment.courseTitle}</span>?
             </p>

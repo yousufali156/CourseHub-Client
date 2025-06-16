@@ -114,8 +114,8 @@ const CourseDetailsPage = () => {
       });
 
       setEnrolled(true);
-      setCourse(prev => ({ ...prev, seats: prev.seats - 1 }));
-      setUserEnrollCount(prev => prev + 1);
+      setCourse(prev => ({ ...prev, seats: prev.seats -1 }));
+      setUserEnrollCount(prev => prev  +1);
 
       // Redirect to My Enrolled Courses
       setTimeout(() => {

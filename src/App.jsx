@@ -52,7 +52,7 @@ const App = () => {
 
         <Route path="/courses" element={<Courses />} />
         <Route path="/course-details/:id" element={<PrivateRoute><CourseDetailsPage /></PrivateRoute>} />
-        <Route path="//upcoming-course" element={ <PrivateRoute> <UpcomingCourse /></PrivateRoute>} />
+        <Route path="/upcoming-course" element={ <PrivateRoute> <UpcomingCourse /></PrivateRoute>} />
 
         {/* <Route
           path="/upcoming-course"

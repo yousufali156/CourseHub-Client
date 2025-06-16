@@ -64,7 +64,7 @@ const ManageCourse = () => {
   if (authLoading || loading) {
     return (
       <div className="text-center py-10">
-        <p className="text-lg text-base-300 font-medium">Loading your courses...</p>
+        <p className="text-lg font-medium">Loading your courses...</p>
       </div>
     );
   }
@@ -89,10 +89,10 @@ const ManageCourse = () => {
 
       {courses.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-base-300 text-lg mb-4">You haven't added any courses yet.</p>
+          <p className=" text-lg mb-4">You haven't added any courses yet.</p>
           <Link
             to="/add-course"
-            className="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition duration-300 shadow-md"
+            className="bg-green-600 px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition duration-300 shadow-md"
           >
             Add Your First Course
           </Link>
@@ -125,14 +125,14 @@ const ManageCourse = () => {
                       </Link>
                       <button
                         onClick={() => handleDeleteClick(course)}
-                        className="text-red-600 hover:text-red-900 bg-red-100 p-2 rounded-full"
+                        className="text-red-500 hover:text-red-700 p-2 bg-blue-100 rounded-full"
                         title="Delete Course"
                       >
                         <Trash2 size={20} />
                       </button>
                       <Link
                         to={`/course/${course._id}`}
-                        className="text-base-300 hover:text-base-300 bg-green-500 p-2 rounded-full"
+                        className="text-green-500 hover:text-green-900 bg-blue-100 p-2 rounded-full"
                         title="View Details"
                       >
                         <Info size={20} />
@@ -148,17 +148,17 @@ const ManageCourse = () => {
 
       {/* Delete Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
           <div className="bg-base-300 rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
             <Trash2 className="text-red-500 mx-auto mb-4" size={48} />
-            <h3 className="text-xl font-bold text-base-300 mb-4">Confirm Deletion</h3>
-            <p className="text-base-300 mb-6">
+            <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+            <p className=" mb-6">
               Are you sure you want to delete "<span className="font-semibold">{courseToDelete?.courseTitle}</span>"?
             </p>
             <div className="flex justify-center space-x-4">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-300 text-base-300 px-6 py-2 rounded-full font-semibold hover:bg-gray-400"
+                className="bg-gray-500  px-6 py-2 rounded-full font-semibold hover:bg-gray-400"
               >
                 Cancel
               </button>
