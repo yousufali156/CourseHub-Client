@@ -47,13 +47,14 @@ const AboutTeamPage = () => {
                 OUR TEAM
             </h1>
 
-            <div className="relative text-center my-10">
+            <div className="relative text-center my-1">
                 <div className="text-4xl text-blue-600 dark:text-blue-400 font-bold relative inline-block">
                     <div className="text-2xl mb-1 animate-bounce">↑</div>
                     <h1 className="uppercase tracking-widest border-t-2 border-blue-400 pt-3">
                         Upper Line Hidden Text
                     </h1>
                 </div>
+                <h1 className='uppercase tracking-widest text-green-400 text-5xl font-bold pt-3'>Our Team</h1>
             </div>
 
 

@@ -47,9 +47,13 @@ const Navbar = () => {
     <nav className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex flex-wrap justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="text-white text-2xl font-bold">
-          Course<span className="text-yellow-300">Hub</span>
-        </Link>
+        <Link to="/" className="flex items-center space-x-2">
+  <img src="/logoo.png" alt="Logo" className="h-10 w-10 rounded-full object-cover" />
+  <span className="text-white text-2xl font-bold">
+    Course<span className="text-yellow-300">Hub</span>
+  </span>
+</Link>
+
 
         {/* Hamburger */}
         <div className='lg:hidden flex items-center'>
@@ -82,6 +86,7 @@ const Navbar = () => {
               <li><Link to="/add-course" className={navLinkClass('/add-course')}>Add Course</Link></li>
               <li><Link to="/manage-course" className={navLinkClass('/manage-course')}>Manage Course</Link></li>
               <li><Link to="/my-enrolled-courses" className={navLinkClass('/my-enrolled-courses')}>My Enrolled</Link></li>
+              <li><Link to="/upcoming-course" className={navLinkClass('/upcoming-course')}>Upcoming </Link></li>
               <li><Link to="/contact" className={navLinkClass('/contact')}>Contact</Link></li>
             </>
           )}
@@ -105,12 +110,12 @@ const Navbar = () => {
               />
 
               {showMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-base-300 text-base-300 rounded-md shadow-lg py-1 z-50">
+                <div className="absolute right-0 mt-2 w-48  rounded-md shadow-lg py-1 z-50">
                   <span className="block px-4 py-2 text-sm truncate">{user.displayName || user.email}</span>
                   <hr className="border-gray-200" />
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-red-600"
+                    className="w-full text-left px-4 py-2 flex items-center text-red-600"
                   >
                     <LogOut size={16} className="mr-2" /> Logout
                   </button>
@@ -139,6 +144,7 @@ const Navbar = () => {
                 <Link to="/add-course" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Add Course</Link>
                 <Link to="/manage-course" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Manage Course</Link>
                 <Link to="/my-enrolled-courses" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">My Enrolled</Link>
+                <Link to="/upcoming-course" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Upcoming Course</Link>
                 <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Contact</Link>
               </>
             )}

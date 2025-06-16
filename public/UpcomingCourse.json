@@ -1,0 +1,212 @@
+[
+  {
+    "courseName": "Office Applications & Unicode Bangla ",
+    "tuitionFee": 3000,
+    "duration": "3 Month",
+    "date": "Upcoming",
+    "description": "Basic office software and Bangla typing skills."
+  },
+  {
+    "courseName": "Digital Marketing",
+    "tuitionFee": 5000,
+    "duration": "3 Month",
+    "date": "Upcoming",
+    "description": "Learn online marketing, SEO, and social media strategies."
+  },
+  {
+    "courseName": "Animation,Audio,&Video Editing,Photo Editing",
+    "tuitionFee": 8500,
+    "duration": "3 Month",
+    "date": "Upcoming",
+    "description": "Master multimedia tools including animation and editing."
+  },
+  {
+    "courseName": "Hardware Maintenance & Troubleshooting",
+    "tuitionFee": 5000,
+    "duration": "3 Month",
+    "date": "Upcoming",
+    "description": "Learn to fix and maintain computer hardware systems."
+  },
+  {
+    "courseName": "Certified Web Development Specialist",
+    "tuitionFee": 15000,
+    "duration": "3 Month",
+    "date": "Upcoming",
+    "description": "Become a certified full-stack web developer."
+  },
+  {
+    "courseName": "Web Site Design and  Outsourcing Technique",
+    "tuitionFee": 10000,
+    "duration": "3 Month",
+    "date": "Upcoming",
+    "description": "Basics of web design and global outsourcing tips."
+  },
+  {
+    "courseName": "Cyber Security Essentials",
+    "tuitionFee": 3000,
+    "duration": "1 Month",
+    "date": "Upcoming",
+    "description": "Protect systems from cyber threats and attacks."
+  },
+  {
+    "courseName": "E-Government Applications",
+    "tuitionFee": 3000,
+    "duration": "1 Month",
+    "date": "Upcoming",
+    "description": "Explore how technology is transforming governance."
+  },
+  {
+    "courseName": "Java Programming",
+    "tuitionFee": 5000,
+    "duration": "03 weeks",
+    "date": "Upcoming",
+    "description": "Fundamentals of Java development and syntax."
+  },
+  {
+    "courseName": "Web Applications Dev with ASP.Net & MS SQL",
+    "tuitionFee": 7000,
+    "duration": "03 weeks",
+    "date": "Upcoming",
+    "description": "Build .NET web apps using SQL Server."
+  },
+  {
+    "courseName": "D.A.D Oracle with Database Administration",
+    "tuitionFee": 18000,
+    "duration": "23 weeks",
+    "date": "Upcoming",
+    "description": "Create and manage Oracle database applications."
+  },
+  {
+    "courseName": "Network Administration (Windows & Linux)",
+    "tuitionFee": 10000,
+    "duration": "03 weeks",
+    "date": "Upcoming",
+    "description": "Learn server and network management skills."
+  },
+  {
+    "courseName": "Software Estimation and Product Definition",
+    "tuitionFee": 3000,
+    "duration": "03 weeks",
+    "date": "Upcoming",
+    "description": "Define and estimate software project scopes."
+  },
+  {
+    "courseName": "Training Programme on Python",
+    "tuitionFee": 5000,
+    "duration": "2 Months",
+    "date": "Upcoming",
+    "description": "Learn Python programming from scratch."
+  },
+  {
+    "courseName": "Development of Women Entrepreneurs",
+    "tuitionFee": 0,
+    "duration": "2 Days",
+    "date": "Upcoming",
+    "description": "Empowering women through entrepreneurship skills."
+  },
+  {
+    "courseName": "Professional Android Application Development",
+    "tuitionFee": 8000,
+    "duration": "04 Months",
+    "date": "Upcoming",
+    "description": "Build mobile apps with Android Studio."
+  },
+  {
+    "courseName": "3D Modeling & Animation",
+    "tuitionFee": 8000,
+    "duration": "04 Months",
+    "date": "Upcoming",
+    "description": "Create 3D art and animations for games or film."
+  },
+  {
+    "courseName": "2D Modeling, Animation & Effects",
+    "tuitionFee": 8000,
+    "duration": "04 Months",
+    "date": "Upcoming",
+    "description": "Design 2D graphics and animation effects."
+  },
+  {
+    "courseName": "Training program on Software Testing",
+    "tuitionFee": 4000,
+    "duration": "3 Weeks",
+    "date": "Upcoming",
+    "description": "Manual and automated software testing practices."
+  },
+  {
+    "courseName": "Big Data Analytics",
+    "tuitionFee": 4000,
+    "duration": "3 Weeks",
+    "date": "Upcoming",
+    "description": "Analyze big datasets and derive insights."
+  },
+  {
+    "courseName": "Graphics Design & Multimedia (Only for Woman)",
+    "tuitionFee": 5000,
+    "duration": "3 Months",
+    "date": "Upcoming",
+    "description": "Creative media skills designed for women."
+  },
+  {
+    "courseName": "Server and Internet Security Administrator",
+    "tuitionFee": 6000,
+    "duration": "2 Months",
+    "date": "Upcoming",
+    "description": "Secure and administer server infrastructure."
+  },
+  {
+    "courseName": "PHP with Code Igniter Framework",
+    "tuitionFee": 12000,
+    "duration": "3 Months",
+    "date": "Upcoming",
+    "description": "Develop PHP apps using CodeIgniter framework."
+  },
+  {
+    "courseName": "Fundamental course of Angular",
+    "tuitionFee": 1000,
+    "duration": "1 weeks",
+    "date": "Upcoming",
+    "description": "Basics of Angular framework for frontend apps."
+  },
+  {
+    "courseName": "Agile Methodology with Scrum Process",
+    "tuitionFee": 10000,
+    "duration": "5 Days",
+    "date": "Upcoming",
+    "description": "Master Agile project workflows with Scrum."
+  },
+  {
+    "courseName": "Inbound Marketing Short Course",
+    "tuitionFee": 2500,
+    "duration": "4 weeks",
+    "date": "Upcoming",
+    "description": "Learn lead generation and digital funnels."
+  },
+  {
+    "courseName": "Inbound Marketing short course upcoming",
+    "tuitionFee": 2000,
+    "duration": "4 weeks",
+    "date": "Upcoming",
+    "description": "Upcoming batch of inbound marketing training."
+  },
+  {
+    "courseName": "Instagram Marketing",
+    "tuitionFee": 5000,
+    "duration": "2 Month",
+    "date": "Upcoming",
+    "description": "Grow business using Instagram strategies."
+  },
+  {
+    "courseName": "Java Programming Dhaka",
+    "tuitionFee": 3200,
+    "duration": "6 Month",
+    "date": "Upcoming",
+    "description": "Java programming course offered in Dhaka."
+  },
+  {
+    "courseName": "Fundamental Of programming language C++",
+    "tuitionFee": 5000,
+    "duration": "1 day",
+    "date": "Upcoming",
+    "description": "Introductory course to C++ basics."
+  }
+]

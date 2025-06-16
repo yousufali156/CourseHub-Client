@@ -29,7 +29,7 @@ const Courses = () => {
     <div className="p-6 md:p-10 bg-base-300 space-y-12">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl md:text-3xl font-bold">Latest Courses</h2>
-        <Link to="/courses" className="text-blue-600 hover:underline font-medium">View All</Link>
+        <Link to="/courses" className="text-green-500 hover:underline font-medium">View All</Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -64,42 +64,37 @@ const Courses = () => {
         </div>
       )}
 
-  
 
 
 
 
-<div className="relative w-full h-1 mt-12 mb-12 overflow-hidden rounded-full bg-blue-500">
-  <div
-    className="absolute inset-0 w-full h-full 
+
+      <div className="relative w-full h-1 mt-12 mb-12 overflow-hidden rounded-full bg-blue-400">
+        <div
+          className="absolute inset-0 w-full h-full 
                bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 to-blue-500 
                bg-[length:200%_200%] animate-gradient-x"
-  ></div>
-</div>
-
-
-
-
-
-      <div className="w-full bg-base-100 py-10 px-4 md:px-10 lg:px-20 shadow-inner border-t border-gray-200">
+        ></div>
+      </div>
+      <div className="w-full bg-base-100 py-10 px-4 md:px-10 lg:px-20 shadow-inner rounded-2xl border border-gray-200">
         <div className="max-w-5xl mx-auto text-center">
-          <h3 className="text-2xl md:text-3xl font-bold text-blue-700 mb-6">
+          <h3 className="text-2xl md:text-3xl font-bold text-blue-500 mb-6">
             🔹 Popular Courses
           </h3>
 
-          <p className="text-base text-gray-600 mb-8">
+          <p className="text-base mb-8">
             Discover our most enrolled courses, trusted by thousands of learners.
             <br />
             Stay ahead with practical skills taught by top industry professionals.
           </p>
 
-          <div className="space-y-4 text-xl font-semibold text-blue-600">
+          <div className="space-y-4 text-xl font-semibold text-blue-500">
             {popularCourses.length > 0 ? (
               popularCourses.slice(0, 3).map(course => (
                 <Link
                   to={`/course-details/${course._id}`}
                   key={course._id}
-                  className="block hover:underline hover:text-blue-800 transition duration-300"
+                  className="block hover:underline hover:text-blue-400 transition duration-300"
                 >
                   {course.courseTitle}
                 </Link>

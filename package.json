@@ -36,6 +36,7 @@
     "react-router-dom": "^7.6.2",
     "react-slick": "^0.30.3",
     "react-toastify": "^11.0.5",
+    "shadcn-ui": "^0.9.5",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.22.0"
   },

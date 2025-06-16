@@ -23,6 +23,9 @@ import NotFoundCourse from './Components/NotFoundCourse';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 import EditCourseButton from './Pages/EditCourseButton';
 import MyCourseDetailsButton from './Pages/MyCourseDetailsButton';
+import UpcomingCourse from './Pages/Shared/UpcomingCourse';
+import PrivateRoute from './PrivateRoute/PrivateRoute';
+
 
 // Layout wrapper
 const AppLayout = () => (
@@ -42,16 +45,28 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        <Route path="/add-course" element={<PrivateRoute><AddCourse /></PrivateRoute>} />
+        <Route path="/manage-course" element={<PrivateRoute><ManageCourse /></PrivateRoute>} />
+        <Route path="/my-enrolled-courses" element={<PrivateRoute><MyEnrolledCourses /></PrivateRoute>} />
+
         <Route path="/courses" element={<Courses />} />
-        <Route path="/add-course" element={<AddCourse />} />
-        <Route path="/manage-course" element={<ManageCourse />} />
-        <Route path="/my-enrolled-courses" element={<MyEnrolledCourses />} />
-        <Route path="/course-details/:id" element={<CourseDetailsPage />} />
+        <Route path="/course-details/:id" element={<PrivateRoute><CourseDetailsPage /></PrivateRoute>} />
+        <Route path="//upcoming-course" element={ <PrivateRoute> <UpcomingCourse /></PrivateRoute>} />
+
+        {/* <Route
+          path="/upcoming-course"
+          element={
+            <PrivateRoute></PrivateRoute>
+          }
+        /> */}
+        
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<NotFoundCourse />} />
         <Route path="/edit-course/:id" element={<EditCourseButton />} />
         <Route path="/course/:id" element={<MyCourseDetailsButton />} />
+
       </Route>
     )
   );

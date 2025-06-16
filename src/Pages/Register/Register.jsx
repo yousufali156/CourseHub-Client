@@ -114,7 +114,7 @@ const Register = () => {
 
             <form onSubmit={handleRegister} className="space-y-2">
               <div>
-                <label className="label text-blue-900 font-medium">Name</label>
+                <label className="label text-blue-400 mb-2 font-medium">Name</label>
                 <input
                   type="text"
                   name="name"
@@ -125,7 +125,7 @@ const Register = () => {
               </div>
 
               <div>
-                <label className="label text-blue-900 font-medium">Photo URL</label>
+                <label className="label text-blue-400 mb-2 font-medium">Photo URL</label>
                 <input
                   type="text"
                   name="photoURL"
@@ -136,7 +136,7 @@ const Register = () => {
               </div>
 
               <div>
-                <label className="label text-blue-900 font-medium">Email</label>
+                <label className="label text-blue-400 mb-2 font-medium">Email</label>
                 <input
                   name="email"
                   type="email"
@@ -148,7 +148,7 @@ const Register = () => {
 
               {/* Password */}
               <div>
-                <label className="label text-blue-900 font-medium">Password</label>
+                <label className="label text-blue-400 mb-2 font-medium">Password</label>
                 <div className="relative">
                   <input
                     name="password"
@@ -160,7 +160,7 @@ const Register = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-base-300"
+                    className="absolute top-1/2 right-3 -translate-y-1/2"
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
@@ -169,7 +169,7 @@ const Register = () => {
 
               {/* Confirm Password */}
               <div>
-                <label className="label text-blue-900 font-medium">Confirm Password</label>
+                <label className="label text-blue-400 mb-2 font-medium">Confirm Password</label>
                 <div className="relative">
                   <input
                     name="confirmPassword"
@@ -181,7 +181,7 @@ const Register = () => {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-base-300"
+                    className="absolute top-1/2 right-3 -translate-y-1/2"
                   >
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
@@ -199,7 +199,7 @@ const Register = () => {
             </form>
 
             {/* Divider */}
-            <div className="divider text-blue-900 font-medium">OR</div>
+            <div className="divider text-blue-400 font-medium">OR</div>
 
             {/* Social Login */}
             <div className="flex flex-col gap-2">
@@ -219,11 +219,11 @@ const Register = () => {
 
             {/* Login Redirect */}
             <div className="mt-2 text-center">
-              <p className="text-sm text-blue-900">
+              <p className="text-sm text-blue-400">
                 Already have an account?{' '}
                 <button
                   onClick={() => navigate('/login')}
-                  className="ml-1 inline-block text-purple-700 font-semibold hover:underline"
+                  className="ml-1 inline-block text-purple-500 font-semibold hover:underline"
                 >
                   Login
                 </button>
