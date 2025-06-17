@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash, FaGoogle, FaGithub } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import RegisterLottie from '../../assets/Animation/Signup Animation.json';
 import AuthContext from '../../FirebaseAuthContext/AuthContext';
+import axios from 'axios';
 
 const Login = () => {
   const { signInUser, signInWithGoogle, signInWithGithub } = useContext(AuthContext);
@@ -15,6 +16,15 @@ const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
+  // ✅ JWT Function: get JWT from backend after Firebase login
+  const getCustomJwt = async (firebaseUser) => {
+    const idToken = await firebaseUser.getIdToken();
+    const res = await axios.post('http://localhost:3000/jwt', { token: idToken });
+    const jwt = res.data.token;
+    localStorage.setItem('access-token', jwt); // Store custom JWT
+  };
+
+  // ✅ Email/Password Login Handler
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
@@ -22,7 +32,8 @@ const Login = () => {
     const password = e.target.password.value;
 
     try {
-      await signInUser(email, password);
+      const result = await signInUser(email, password);
+      await getCustomJwt(result.user); // ⬅️ Exchange Firebase token for custom JWT
       toast.success('Login Successful!');
       navigate(from, { replace: true });
     } catch (err) {
@@ -31,13 +42,17 @@ const Login = () => {
     }
   };
 
+  // ✅ Social Login Handler
   const handleSocialLogin = async (provider) => {
     try {
+      let result;
       if (provider === 'google') {
-        await signInWithGoogle();
+        result = await signInWithGoogle();
       } else if (provider === 'github') {
-        await signInWithGithub();
+        result = await signInWithGithub();
       }
+
+      await getCustomJwt(result.user);
       toast.success('Login Successful!');
       navigate(from, { replace: true });
     } catch (err) {
@@ -106,12 +121,10 @@ const Login = () => {
                 </a>
               </div>
 
-              {/* Error Message */}
               {error && (
                 <p className="text-sm text-red-600 font-medium mt-2">{error}</p>
               )}
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full py-2 mt-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:opacity-90 transition duration-300"
@@ -120,27 +133,25 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Divider */}
             <div className="divider text-purple-500 font-medium">OR</div>
 
-            {/* Social Login */}
+            {/* Social Login Buttons */}
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => handleSocialLogin('google')}
-                className="btn btn-outline w-full flex items-center gap-2 bg-blue-500 hover:text-base-300 transition"
+                className="btn btn-outline w-full flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-600"
               >
-                <FaGoogle className="text-lg " /> Continue with Google
+                <FaGoogle className="text-lg" /> Continue with Google
               </button>
 
               <button
                 onClick={() => handleSocialLogin('github')}
-                className="btn btn-outline w-full flex items-center gap-2 hover:text-red-600 transition"
+                className="btn btn-outline w-full flex items-center gap-2 bg-black text-white hover:bg-gray-800"
               >
                 <FaGithub className="text-lg" /> Continue with GitHub
               </button>
             </div>
 
-            {/* Register Redirect */}
             <div className="mt-6 text-center">
               <p className="text-sm text-blue-400">
                 Don't have an account?{' '}

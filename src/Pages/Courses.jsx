@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom'; // ✅ Fix for react-router-dom
 import axios from 'axios';
 
 const Courses = () => {
@@ -8,7 +8,7 @@ const Courses = () => {
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    // Fetch all courses
+    // ✅ Fetch all courses (NO JWT)
     fetch('http://localhost:3000/courses')
       .then(res => res.json())
       .then(data => {
@@ -17,7 +17,7 @@ const Courses = () => {
       })
       .catch(error => console.error("❌ Error fetching courses:", error));
 
-    // Fetch popular courses (based on enrollment count)
+    // ✅ Fetch popular courses (NO JWT)
     axios.get('http://localhost:3000/popular-courses')
       .then(res => setPopularCourses(res.data))
       .catch(err => console.error("❌ Error fetching popular courses:", err));
@@ -64,18 +64,16 @@ const Courses = () => {
         </div>
       )}
 
-
-
-
-
-
+      {/* Gradient bar */}
       <div className="relative w-full h-1 mt-12 mb-12 overflow-hidden rounded-full bg-blue-400">
         <div
           className="absolute inset-0 w-full h-full 
-               bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 to-blue-500 
-               bg-[length:200%_200%] animate-gradient-x"
+            bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 to-blue-500 
+            bg-[length:200%_200%] animate-gradient-x"
         ></div>
       </div>
+
+      {/* Popular courses */}
       <div className="w-full bg-base-100 py-10 px-4 md:px-10 lg:px-20 shadow-inner rounded-2xl border border-gray-200">
         <div className="max-w-5xl mx-auto text-center">
           <h3 className="text-2xl md:text-3xl font-bold text-blue-500 mb-6">
@@ -109,10 +107,6 @@ const Courses = () => {
           </div>
         </div>
       </div>
-
-
-
-
     </div>
   );
 };

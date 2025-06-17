@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Edit, Trash2, Info } from 'react-feather';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
+import axiosSecure from '../../api/axiosSecure';
+
 
 const ManageCourse = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -15,10 +17,8 @@ const ManageCourse = () => {
     if (!user) return;
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:3000/courses?instructorEmail=${user.email}`);
-      if (!res.ok) throw new Error('Failed to fetch courses');
-      const data = await res.json();
-      const sorted = data.sort(
+      const res = await axiosSecure.get(`/courses?instructorEmail=${user.email}`);
+      const sorted = res.data.sort(
         (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
       setCourses(sorted);
@@ -45,14 +45,11 @@ const ManageCourse = () => {
     if (!courseToDelete) return;
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:3000/courses/${courseToDelete._id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error('Failed to delete');
+      await axiosSecure.delete(`/courses/${courseToDelete._id}`);
       toast.success(`Course "${courseToDelete.courseTitle}" deleted successfully!`);
       setShowDeleteModal(false);
       setCourseToDelete(null);
-      fetchCourses(); // Reload after delete
+      fetchCourses();
     } catch (error) {
       console.error('Delete error:', error);
       toast.error('Failed to delete course.');
@@ -98,21 +95,21 @@ const ManageCourse = () => {
           </Link>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg shadow-md border ">
-          <table className="min-w-full divide-y h-50 border">
-            <thead className="font-bold text-8xl bg-green-400 ">
+        <div className="overflow-x-auto rounded-lg shadow-md border">
+          <table className="min-w-full divide-y border">
+            <thead className="bg-green-400">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Course Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Description</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Seats</th>
-                <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Course Title</th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Seats</th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className=" divide-y ">
+            <tbody className="divide-y">
               {courses.map((course) => (
-                <tr key={course._id} className="">
-                  <td className="px-6 py-4 text-sm font-medium ">{course.courseTitle}</td>
-                  <td className="px-6 py-4 text-sm line-clamp-2">{course.shortDescription}</td>
+                <tr key={course._id}>
+                  <td className="px-6 py-4 text-sm font-medium">{course.courseTitle}</td>
+                  <td className="px-6 py-4 text-sm line-clamp-2">{course.description}</td>
                   <td className="px-6 py-4 text-sm">{course.seats}</td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
                     <div className="flex space-x-2">
@@ -152,13 +149,13 @@ const ManageCourse = () => {
           <div className="bg-base-300 rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
             <Trash2 className="text-red-500 mx-auto mb-4" size={48} />
             <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
-            <p className=" mb-6">
+            <p className="mb-6">
               Are you sure you want to delete "<span className="font-semibold">{courseToDelete?.courseTitle}</span>"?
             </p>
             <div className="flex justify-center space-x-4">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-500  px-6 py-2 rounded-full font-semibold hover:bg-gray-400"
+                className="bg-gray-500 px-6 py-2 rounded-full font-semibold hover:bg-gray-400"
               >
                 Cancel
               </button>

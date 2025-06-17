@@ -6,7 +6,7 @@ import {
   Route,
   createRoutesFromElements,
   Outlet,
-} from 'react-router-dom'; // ✅ Updated from 'react-router' to 'react-router-dom'
+} from 'react-router';
 
 // Components & Pages
 import Navbar from './Components/Navbar/Navbar';
@@ -52,7 +52,6 @@ const App = () => {
         <Route path="/add-course" element={<PrivateRoute><AddCourse /></PrivateRoute>} />
         <Route path="/manage-course" element={<PrivateRoute><ManageCourse /></PrivateRoute>} />
         <Route path="/my-enrolled-courses" element={<PrivateRoute><MyEnrolledCourses /></PrivateRoute>} />
-
         <Route path="/courses" element={<Courses />} />
         <Route path="/course-details/:id" element={<PrivateRoute><CourseDetailsPage /></PrivateRoute>} />
         <Route path="/upcoming-course" element={<PrivateRoute><UpcomingCourse /></PrivateRoute>} />

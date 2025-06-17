@@ -22,6 +22,7 @@
     "firebase": "^11.9.1",
     "firebase-admin": "^13.4.0",
     "framer-motion": "^12.18.1",
+    "jsonwebtoken": "^9.0.2",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.513.0",
     "mongodb": "^6.17.0",

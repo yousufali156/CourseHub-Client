@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import RegisterLottie from '../../assets/Animation/Signup Animation.json';
 import AuthContext from '../../FirebaseAuthContext/AuthContext';
@@ -17,21 +17,22 @@ const Register = () => {
 
   const from = location.state?.from?.pathname || '/';
 
-  const sendTokenToServer = async (token) => {
+  // ✅ Send Firebase Token -> Get Custom JWT
+  const sendTokenToServer = async (firebaseToken) => {
     try {
-      await axios.get('http://localhost:3000/courses', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.post('http://localhost:5000/jwt', { token: firebaseToken });
+      const jwt = res.data.token;
+      localStorage.setItem('jwt-token', jwt);
     } catch (err) {
-      console.error('Token send error:', err);
+      console.error('JWT Error:', err);
     }
   };
 
+  // ✅ Handle Register Form Submit
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
+
     const form = e.target;
     const name = form.name.value.trim();
     const photoURL = form.photoURL.value.trim();
@@ -42,40 +43,31 @@ const Register = () => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
     if (!passwordRegex.test(password)) {
-      return setError(
-        'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে এবং এতে ১টি বড় হাতের অক্ষর, ১টি ছোট হাতের অক্ষর, ১টি সংখ্যা ও ১টি স্পেশাল ক্যারেক্টার থাকতে হবে।'
-      );
+      return setError('Password must be 8 characters long and include uppercase, lowercase, number & special character.');
     }
 
     if (password.includes(email)) {
-      return setError('পাসওয়ার্ডে ইমেইল অ্যাড্রেস থাকা উচিত না।');
+      return setError('Password should not contain your email address.');
     }
 
     if (password !== confirmPassword) {
-      return setError('Password এবং Confirm Password মিলছে না।');
+      return setError('Passwords do not match.');
     }
 
     try {
       const result = await createUser(email, password);
-      await updateProfile(result.user, {
-        displayName: name,
-        photoURL,
-      });
+      await updateProfile(result.user, { displayName: name, photoURL });
 
-      const idToken = await result.user.getIdToken();
-      localStorage.setItem(
-        'user',
-        JSON.stringify({ email: result.user.email, accessToken: idToken })
-      );
+      const firebaseToken = await result.user.getIdToken();
+      await sendTokenToServer(firebaseToken);
 
-      await sendTokenToServer(idToken);
-
-      navigate(from, { replace: true }); // ✅ Register সফল হলে আগের পেজ বা Homepage
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Registration failed.');
     }
   };
 
+  // ✅ Handle Google/GitHub Login
   const handleSocialLogin = async (provider) => {
     try {
       let result;
@@ -85,14 +77,9 @@ const Register = () => {
         result = await signInWithGithub();
       }
 
-      const idToken = await result.user.getIdToken();
-      localStorage.setItem(
-        'user',
-        JSON.stringify({ email: result.user.email, accessToken: idToken })
-      );
-
-      await sendTokenToServer(idToken);
-      navigate(from, { replace: true }); // ✅ রিডাইরেক্ট
+      const firebaseToken = await result.user.getIdToken();
+      await sendTokenToServer(firebaseToken);
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Social login failed.');
     }
@@ -101,10 +88,12 @@ const Register = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-500 to-purple-600 p-6">
       <div className="flex flex-col-reverse lg:flex-row items-center gap-10 w-full max-w-6xl">
+        {/* Lottie Animation */}
         <div className="w-full max-w-md lg:max-w-lg">
           <Lottie animationData={RegisterLottie} loop />
         </div>
 
+        {/* Register Form */}
         <div className="card w-full max-w-sm bg-base-300/90 shadow-xl backdrop-blur-md rounded-xl">
           <div className="card-body p-5">
             <h1 className="text-4xl font-extrabold text-blue-500 mb-6 text-center">
@@ -114,35 +103,17 @@ const Register = () => {
             <form onSubmit={handleRegister} className="space-y-2">
               <div>
                 <label className="label text-blue-400 mb-2 font-medium">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  className="input input-bordered w-full"
-                  placeholder="Your Name"
-                  required
-                />
+                <input name="name" type="text" className="input input-bordered w-full" required />
               </div>
 
               <div>
                 <label className="label text-blue-400 mb-2 font-medium">Photo URL</label>
-                <input
-                  type="text"
-                  name="photoURL"
-                  className="input input-bordered w-full"
-                  placeholder="Photo URL"
-                  required
-                />
+                <input name="photoURL" type="text" className="input input-bordered w-full" required />
               </div>
 
               <div>
                 <label className="label text-blue-400 mb-2 font-medium">Email</label>
-                <input
-                  name="email"
-                  type="email"
-                  className="input input-bordered w-full"
-                  placeholder="Your Email"
-                  required
-                />
+                <input name="email" type="email" className="input input-bordered w-full" required />
               </div>
 
               <div>
@@ -152,13 +123,12 @@ const Register = () => {
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     className="input input-bordered w-full pr-10"
-                    placeholder="Password"
                     required
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute top-1/2 right-3 -translate-y-1/2"
+                    onClick={() => setShowPassword((prev) => !prev)}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
@@ -172,20 +142,19 @@ const Register = () => {
                     name="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     className="input input-bordered w-full pr-10"
-                    placeholder="Confirm Password"
                     required
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword((prev) => !prev)}
                     className="absolute top-1/2 right-3 -translate-y-1/2"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
                   >
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
               </div>
 
-              {error && <p className="text-sm text-red-600 font-medium mt-2">{error}</p>}
+              {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
 
               <button
                 type="submit"
@@ -202,7 +171,7 @@ const Register = () => {
                 onClick={() => handleSocialLogin('google')}
                 className="btn btn-outline w-full flex items-center gap-2 bg-blue-500 hover:text-base-300 transition"
               >
-                <FaGoogle className="text-lg " /> Continue with Google
+                <FaGoogle className="text-lg" /> Continue with Google
               </button>
 
               <button
@@ -212,8 +181,6 @@ const Register = () => {
                 <FaGithub className="text-lg" /> Continue with GitHub
               </button>
             </div>
-
-
 
             <div className="mt-2 text-center">
               <p className="text-sm text-blue-400">

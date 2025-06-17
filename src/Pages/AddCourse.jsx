@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import { toast } from 'react-toastify';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
 import { useNavigate } from 'react-router';
+import axiosSecure from '../../api/axiosSecure';
+
 
 const AddCourse = () => {
   const { user } = useContext(AuthContext);
@@ -39,18 +41,12 @@ const AddCourse = () => {
 
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3000/courses', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newCourse),
-      });
+      const res = await axiosSecure.post('/courses', newCourse); // ✅ JWT attached via interceptor
 
-      if (!res.ok) throw new Error('Failed to add course');
-
-      toast.success('Course added successfully!');
-      navigate('/manage-course');
+      if (res.status === 200 || res.status === 201) {
+        toast.success('Course added successfully!');
+        navigate('/manage-course');
+      }
     } catch (error) {
       console.error(error);
       toast.error('Something went wrong. Try again later.');
@@ -105,7 +101,7 @@ const AddCourse = () => {
 
         {/* Duration */}
         <div>
-          <label className="block  font-medium mb-2">Duration</label>
+          <label className="block font-medium mb-2">Duration</label>
           <input
             type="text"
             value={duration}
@@ -118,7 +114,7 @@ const AddCourse = () => {
 
         {/* Description */}
         <div>
-          <label className="block  font-medium mb-2">Description</label>
+          <label className="block font-medium mb-2">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}

@@ -9,10 +9,10 @@ import {
   GithubAuthProvider,
 } from 'firebase/auth';
 
-
-import { auth, db } from '../Firebase/Firebase.init';
+import { auth } from '../Firebase/Firebase.init';
 import AuthContext from './AuthContext';
 import LoadingSpinner from '../Components/LoadingSpinner';
+import axios from 'axios';
 
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
@@ -21,16 +21,19 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔐 Create user
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
+  // 🔐 Sign in
   const signInUser = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
+  // 🔐 Google & GitHub
   const signInWithGoogle = () => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
@@ -41,14 +44,42 @@ const AuthProvider = ({ children }) => {
     return signInWithPopup(auth, githubProvider);
   };
 
-  const signOutUser = () => {
+  // 🔓 Sign out
+  const signOutUser = async () => {
     setLoading(true);
-    return signOut(auth);
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/logout`,
+        {},
+        { withCredentials: true }
+      );
+      await signOut(auth);
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // 🔄 Auth state listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+
+      if (currentUser?.email) {
+        try {
+          const idToken = await currentUser.getIdToken();
+
+          await axios.post(
+            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/jwt`,
+            { token: idToken },
+            { withCredentials: true } // ✅ Important for sending cookie
+          );
+        } catch (err) {
+          console.error('❌ JWT error:', err);
+        }
+      }
+
       setLoading(false);
     });
 
@@ -59,8 +90,7 @@ const AuthProvider = ({ children }) => {
     () => ({
       user,
       loading,
-      db, // ✅ now db is available to consumers
-      userId: user?.uid || null, // ✅ used in CourseDetailsPage
+      userId: user?.uid || null,
       createUser,
       signInUser,
       signOutUser,

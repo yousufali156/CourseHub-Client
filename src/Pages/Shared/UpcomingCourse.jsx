@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,91 +12,97 @@ import {
   Smartphone,
 } from "lucide-react";
 
+// Icon mapping by category
 const icons = {
-  "Digital Marketing": <Globe className="text-purple-500" />,
-  "Graphics Design": <Brush className="text-blue-400" />,
-  "Web Development": <Code className="text-purple-400" />,
-  "Cyber Security": <Shield className="text-blue-500" />,
-  "Java Programming": <Code className="text-orange-400" />,
-  Python: <Code className="text-yellow-400" />,
-  Android: <Smartphone className="text-green-500" />,
+  "Digital Marketing": <Globe className="text-purple-500 dark:text-purple-300" />,
+  "Graphics Design": <Brush className="text-blue-400 dark:text-blue-300" />,
+  "Web Development": <Code className="text-purple-400 dark:text-purple-300" />,
+  "Cyber Security": <Shield className="text-blue-500 dark:text-blue-300" />,
+  "Java Programming": <Code className="text-orange-400 dark:text-orange-300" />,
+  Python: <Code className="text-yellow-400 dark:text-yellow-300" />,
+  Android: <Smartphone className="text-green-500 dark:text-green-300" />,
 };
 
-const getIcon = (name) => {
-  if (name.includes("Graphics")) return icons["Graphics Design"];
-  if (name.includes("Digital Marketing")) return icons["Digital Marketing"];
-  if (name.includes("Web")) return icons["Web Development"];
-  if (name.includes("Cyber")) return icons["Cyber Security"];
-  if (name.includes("Java")) return icons["Java Programming"];
-  if (name.includes("Python")) return icons["Python"];
-  if (name.includes("Android")) return icons["Android"];
-  return <BookOpen className="text-indigo-400" />;
+// Icon selection fallback
+const getIcon = (name = "") => {
+  const entry = Object.keys(icons).find(key => name.includes(key));
+  return entry ? icons[entry] : <BookOpen className="text-indigo-400 dark:text-indigo-300" />;
 };
 
 const UpcomingCourse = () => {
   const [courses, setCourses] = useState([]);
   const [showAll, setShowAll] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/UpcomingCourse.json")
       .then((res) => res.json())
-      .then((data) => setCourses(data));
+      .then((data) => setCourses(data))
+      .catch((err) => console.error("Failed to fetch upcoming courses:", err))
+      .finally(() => setLoading(false));
   }, []);
 
   const displayedCourses = showAll ? courses : courses.slice(0, 6);
 
   return (
-    <div className="py-12 px-4 md:px-12 bg-base-100">
-      <h2 className="text-4xl font-bold text-center text-blue-400 dark:text-purple-300 mb-8">
+    <section className="py-12 px-4 md:px-12 bg-base-100 transition-colors duration-300">
+      <h2 className="text-4xl font-bold text-center text-blue-400 dark:text-purple-300 mb-10">
         Upcoming Courses
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayedCourses.map((course, index) => (
+      {loading ? (
+        <p className="text-center text-base-content">Loading upcoming courses...</p>
+      ) : (
+        <>
           <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4 mb-3">
-                  {getIcon(course.courseName)}
-                  <h3 className="text-xl font-semibold text-blue-500 dark:text-purple-200">
-                    {course.courseName}
-                  </h3>
-                </div>
-                <p className=" mb-2">
-                  {course.description}
-                </p>
-                <ul className="text-sm">
-                  <li>
-                    <strong>Fee:</strong> {course.tuitionFee} BDT
-                  </li>
-                  <li>
-                    <strong>Duration:</strong> {course.duration}
-                  </li>
-                  <li>
-                    <strong>Date:</strong> {course.date}
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            <AnimatePresence>
+              {displayedCourses.map((course, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 30 }}
+                  transition={{ delay: index * 0.04 }}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <Card className="shadow-md hover:shadow-xl transition-shadow duration-300 h-full">
+                    <CardContent className="p-5 flex flex-col h-full justify-between">
+                      <div>
+                        <div className="flex items-center gap-4 mb-3">
+                          {getIcon(course.courseName)}
+                          <h3 className="text-xl font-semibold text-blue-500 dark:text-purple-200">
+                            {course.courseName}
+                          </h3>
+                        </div>
+                        <p className="text-sm text-base-content mb-3">{course.description}</p>
+                      </div>
+                      <ul className="text-sm text-base-content">
+                        <li><strong>Fee:</strong> {course.tuitionFee} BDT</li>
+                        <li><strong>Duration:</strong> {course.duration}</li>
+                        <li><strong>Date:</strong> {course.date}</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </motion.div>
-        ))}
-      </div>
 
-      <div className="flex justify-center mt-8">
-        <Button
-          variant="default"
-          onClick={() => setShowAll(!showAll)}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110 text-white"
-        >
-          {showAll ? "Show Less" : "Show All"}
-        </Button>
-      </div>
-    </div>
+          <div className="flex justify-center mt-10">
+            <Button
+              variant="default"
+              onClick={() => setShowAll(!showAll)}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110 text-white shadow-md"
+            >
+              {showAll ? "Show Less" : "Show All"}
+            </Button>
+          </div>
+        </>
+      )}
+    </section>
   );
 };
 

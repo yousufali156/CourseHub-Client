@@ -13,6 +13,7 @@ const MyEnrolledCourses = () => {
   const [loading, setLoading] = useState(true);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] = useState(null);
+  const [coursesWithSeats, setCoursesWithSeats] = useState({});
 
   useEffect(() => {
     if (!user?.email) {
@@ -20,55 +21,82 @@ const MyEnrolledCourses = () => {
       return;
     }
 
-    const fetchEnrollments = async () => {
+    const fetchEnrollmentsAndCourses = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/my-enrolled-courses/${user.email}`);
-        setEnrolledCourses(res.data);
+        const [enrollRes, coursesRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/my-enrolled-courses/${user.email}`, {
+            withCredentials: true,
+          }),
+          axios.get(`${API_BASE_URL}/courses`, {
+            withCredentials: true,
+          }),
+        ]);
+
+        setEnrolledCourses(enrollRes.data);
+
+        const seatMap = {};
+        for (const course of coursesRes.data) {
+          seatMap[course._id] = course.seats || 0;
+        }
+        setCoursesWithSeats(seatMap);
       } catch (error) {
-        console.error("Failed to load enrollments", error);
+        console.error("Failed to load data", error);
         toast.error("Failed to load your enrolled courses.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchEnrollments();
+    fetchEnrollmentsAndCourses();
   }, [user]);
 
   const handleRemoveEnrollment = async () => {
-    if (!selectedEnrollment?._id) {
-      toast.error("No course selected for removal.");
-      return;
-    }
+  if (!selectedEnrollment?.courseId || !user?.email) {
+    toast.error("No course selected or user not logged in.");
+    return;
+  }
 
-    try {
-      const response = await axios.delete(`${API_BASE_URL}/enrollments/${selectedEnrollment._id}`);
-      if (response.status === 200 || response.status === 204) {
-        toast.success("Enrollment removed successfully");
-        setEnrolledCourses((prev) =>
-          prev.filter((e) => e._id !== selectedEnrollment._id)
-        );
-        setShowRemoveModal(false);
-        setSelectedEnrollment(null);
-      } else {
-        toast.error("Failed to remove enrollment.");
-      }
-    } catch (error) {
-      console.error("Remove error:", error);
-      toast.error("Error removing enrollment.");
+  try {
+    const deleteRes = await axios.delete(`${API_BASE_URL}/enrollments`, {
+      data: {
+        userEmail: user.email,
+        courseId: selectedEnrollment.courseId,
+      },
+      withCredentials: true,
+    });
+
+    if (deleteRes.status === 200 || deleteRes.status === 204) {
+      toast.success("Enrollment removed successfully");
+
+      setEnrolledCourses((prev) =>
+        prev.filter((e) => e._id !== selectedEnrollment._id)
+      );
+
+      setCoursesWithSeats((prev) => ({
+        ...prev,
+        [selectedEnrollment.courseId]:
+          (prev[selectedEnrollment.courseId] || 0) + 1,
+      }));
+
+      setShowRemoveModal(false);
+      setSelectedEnrollment(null);
+    } else {
+      toast.error("Failed to remove enrollment.");
     }
-  };
+  } catch (error) {
+    console.error("Error removing enrollment:", error);
+    toast.error("Error removing enrollment.");
+  }
+};
+
 
   const formatEnrollmentDate = (rawDate) => {
     if (!rawDate) return "N/A";
-
     if (typeof rawDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
       rawDate += "T00:00:00Z";
     }
-
     const parsedDate = new Date(rawDate);
     if (isNaN(parsedDate.getTime())) return "N/A";
-
     return parsedDate.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -113,6 +141,9 @@ const MyEnrolledCourses = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium bg-base-300 uppercase tracking-wider">
                   Enrolled On
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium bg-base-300 uppercase tracking-wider">
+                  Seats Left
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium bg-base-300 uppercase tracking-wider rounded-tr-lg">
                   Actions
                 </th>
@@ -130,7 +161,14 @@ const MyEnrolledCourses = () => {
                     </Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    Enrolled on: {formatEnrollmentDate(enroll.timestamp)}
+                    {formatEnrollmentDate(enroll.timestamp)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    {coursesWithSeats[enroll.courseId] > 0 ? (
+                      <span>{coursesWithSeats[enroll.courseId]} seats left</span>
+                    ) : (
+                      <span className="text-red-600 font-semibold">No Seats Left</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
