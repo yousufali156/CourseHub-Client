@@ -5,6 +5,8 @@ import Swal from 'sweetalert2';
 import NotFoundCourse from '../Components/NotFoundCourse';
 import axios from 'axios';
 import axiosSecure from '../../api/axiosSecure';
+import helmet from 'helmet';
+
 
 const CourseDetailsPage = () => {
   const { id } = useParams();
