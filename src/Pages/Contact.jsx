@@ -1,6 +1,8 @@
 import React from 'react';
 import { Mail, Phone, MapPin } from 'react-feather';
 import ContactMarquee from './ContactMarquee';
+import helmet from 'helmet';
+
 
 const Contact = () => {
   return (
