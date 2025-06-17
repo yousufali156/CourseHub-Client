@@ -6,7 +6,8 @@ A full-featured web application where users can browse available courses, enroll
 
 ## 🚀 Live Website
 
-🔗 [Live Link](https://your-live-site-link.vercel.app)  
+🔗 [Live Link]> [ https://your-server-domain.vercel.app](https://coursehub-7fd47.web.app/)
+
 
 
 ---
