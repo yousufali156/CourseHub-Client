@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router';
 import AboutTeamPage from './AboutTeamPage';
+import helmet from 'helmet';
 
 const About = () => {
   return (
