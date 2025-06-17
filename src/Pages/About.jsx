@@ -2,7 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router';
 import AboutTeamPage from './AboutTeamPage';
-import helmet from 'helmet';
+import { Helmet } from "react-helmet";
+
 
 const About = () => {
   return (

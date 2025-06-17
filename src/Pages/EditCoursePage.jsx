@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import { BookOpen, Text, Clock, Users, Edit, Image as LucideImageIcon } from 'lucide-react';
-import helmet from 'helmet';
+import { Helmet } from "react-helmet";
 import AuthContext from '../FirebaseAuthContext/AuthContext';
 import LoadingSpinner from '../../Components/LoadingSpinner';
 

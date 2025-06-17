@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import RegisterLottie from '../../assets/Animation/Signup Animation.json';
 import AuthContext from '../../FirebaseAuthContext/AuthContext';
 import axios from 'axios';
+import { Helmet } from 'react-helmet';
 
 const Login = () => {
   const { signInUser, signInWithGoogle, signInWithGithub } = useContext(AuthContext);
@@ -63,6 +64,9 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-500 to-purple-600 p-6">
+      <Helmet>
+        <title>Login || CourseHub</title> 
+      </Helmet>
       <div className="flex flex-col-reverse lg:flex-row items-center gap-10 w-full max-w-6xl">
         {/* Animation */}
         <div className="w-full max-w-md lg:max-w-lg">

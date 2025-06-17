@@ -11,6 +11,7 @@ import {
   Globe,
   Smartphone,
 } from "lucide-react";
+import { Helmet } from "react-helmet";
 
 // Icon mapping by category
 const icons = {

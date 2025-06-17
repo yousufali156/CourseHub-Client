@@ -20,63 +20,110 @@ const githubProvider = new GithubAuthProvider();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 🔐 Create user
-  const createUser = (email, password) => {
+  // Create user with email & password
+  const createUser = async (email, password) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+    setError(null);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      return userCredential;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // 🔐 Sign in
-  const signInUser = (email, password) => {
+  // Sign in with email & password
+  const signInUser = async (email, password) => {
     setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
+    setError(null);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      return userCredential;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // 🔐 Google & GitHub
-  const signInWithGoogle = () => {
+  // Sign in with Google
+  const signInWithGoogle = async () => {
     setLoading(true);
-    return signInWithPopup(auth, googleProvider);
+    setError(null);
+    try {
+      googleProvider.addScope('email');
+      const result = await signInWithPopup(auth, googleProvider);
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const signInWithGithub = () => {
+  // Sign in with Github
+  const signInWithGithub = async () => {
     setLoading(true);
-    return signInWithPopup(auth, githubProvider);
+    setError(null);
+    try {
+      githubProvider.addScope('user:email');
+      const result = await signInWithPopup(auth, githubProvider);
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // 🔓 Sign out
+  // Sign out user
   const signOutUser = async () => {
     setLoading(true);
+    setError(null);
     try {
+      // Call backend logout endpoint to clear session or cookies
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL || 'https://course-hub-server-delta.vercel.app'}/logout`,
         {},
         { withCredentials: true }
       );
       await signOut(auth);
-    } catch (error) {
-      console.error('Logout error:', error);
+      setUser(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Logout error:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔄 Auth state listener
+  // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      setLoading(true);
+      setError(null);
 
       if (currentUser?.email) {
         try {
           const idToken = await currentUser.getIdToken();
-
+          // Send Firebase token to backend to generate custom JWT or session
           await axios.post(
             `${import.meta.env.VITE_API_BASE_URL || 'https://course-hub-server-delta.vercel.app'}/jwt`,
             { token: idToken },
-            { withCredentials: true } // ✅ Important for sending cookie
+            { withCredentials: true }
           );
         } catch (err) {
-          console.error('❌ JWT error:', err);
+          setError('Failed to get JWT from backend');
+          console.error('JWT error:', err);
         }
       }
 
@@ -86,19 +133,17 @@ const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const authInfo = useMemo(
-    () => ({
-      user,
-      loading,
-      userId: user?.uid || null,
-      createUser,
-      signInUser,
-      signOutUser,
-      signInWithGoogle,
-      signInWithGithub,
-    }),
-    [user, loading]
-  );
+  const authInfo = useMemo(() => ({
+    user,
+    loading,
+    error,
+    userId: user?.uid || null,
+    createUser,
+    signInUser,
+    signOutUser,
+    signInWithGoogle,
+    signInWithGithub,
+  }), [user, loading, error]);
 
   return (
     <AuthContext.Provider value={authInfo}>

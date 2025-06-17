@@ -3,8 +3,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { XCircle } from "lucide-react";
-import helmet from 'helmet';
 import AuthContext from "../FirebaseAuthContext/AuthContext";
+import { Helmet } from "react-helmet";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://course-hub-server-delta.vercel.app";
 
@@ -52,43 +52,43 @@ const MyEnrolledCourses = () => {
   }, [user]);
 
   const handleRemoveEnrollment = async () => {
-  if (!selectedEnrollment?.courseId || !user?.email) {
-    toast.error("No course selected or user not logged in.");
-    return;
-  }
-
-  try {
-    const deleteRes = await axios.delete(`${API_BASE_URL}/enrollments`, {
-      data: {
-        userEmail: user.email,
-        courseId: selectedEnrollment.courseId,
-      },
-      withCredentials: true,
-    });
-
-    if (deleteRes.status === 200 || deleteRes.status === 204) {
-      toast.success("Enrollment removed successfully");
-
-      setEnrolledCourses((prev) =>
-        prev.filter((e) => e._id !== selectedEnrollment._id)
-      );
-
-      setCoursesWithSeats((prev) => ({
-        ...prev,
-        [selectedEnrollment.courseId]:
-          (prev[selectedEnrollment.courseId] || 0) + 1,
-      }));
-
-      setShowRemoveModal(false);
-      setSelectedEnrollment(null);
-    } else {
-      toast.error("Failed to remove enrollment.");
+    if (!selectedEnrollment?.courseId || !user?.email) {
+      toast.error("No course selected or user not logged in.");
+      return;
     }
-  } catch (error) {
-    console.error("Error removing enrollment:", error);
-    toast.error("Error removing enrollment.");
-  }
-};
+
+    try {
+      const deleteRes = await axios.delete(`${API_BASE_URL}/enrollments`, {
+        data: {
+          userEmail: user.email,
+          courseId: selectedEnrollment.courseId,
+        },
+        withCredentials: true,
+      });
+
+      if (deleteRes.status === 200 || deleteRes.status === 204) {
+        toast.success("Enrollment removed successfully");
+
+        setEnrolledCourses((prev) =>
+          prev.filter((e) => e._id !== selectedEnrollment._id)
+        );
+
+        setCoursesWithSeats((prev) => ({
+          ...prev,
+          [selectedEnrollment.courseId]:
+            (prev[selectedEnrollment.courseId] || 0) + 1,
+        }));
+
+        setShowRemoveModal(false);
+        setSelectedEnrollment(null);
+      } else {
+        toast.error("Failed to remove enrollment.");
+      }
+    } catch (error) {
+      console.error("Error removing enrollment:", error);
+      toast.error("Error removing enrollment.");
+    }
+  };
 
 
   const formatEnrollmentDate = (rawDate) => {
@@ -110,7 +110,7 @@ const MyEnrolledCourses = () => {
   return (
     <div className="container mx-auto p-6 my-8 bg-base-100 rounded-lg shadow-xl border border-gray-200">
       <Helmet>
-        <title>My Enrolled Courses || CourseHub</title> 
+        <title>My Enrolled Courses || CourseHub</title>
       </Helmet>
       <h2 className="text-4xl font-bold text-center text-blue-700 mb-8">
         My Enrolled Courses

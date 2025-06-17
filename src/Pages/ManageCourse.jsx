@@ -4,7 +4,8 @@ import { toast } from 'react-toastify';
 import { Edit, Trash2, Info } from 'react-feather';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
 import axiosSecure from '../../api/axiosSecure';
-import helmet from 'helmet';
+import { Helmet } from "react-helmet";
+
 
 
 const ManageCourse = () => {

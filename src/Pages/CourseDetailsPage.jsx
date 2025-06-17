@@ -5,7 +5,8 @@ import Swal from 'sweetalert2';
 import NotFoundCourse from '../Components/NotFoundCourse';
 import axios from 'axios';
 import axiosSecure from '../../api/axiosSecure';
-import helmet from 'helmet';
+import { Helmet } from "react-helmet";
+
 
 
 const CourseDetailsPage = () => {
@@ -40,7 +41,7 @@ const CourseDetailsPage = () => {
     const checkEnrollment = async () => {
       if (user) {
         try {
-          const res = await axiosSecure.get(`/my-enrolled-courses/${user.email}`);
+          const res = await axios.get(`https://course-hub-server-delta.vercel.app/my-enrolled-courses/${user.email}`);
           setUserEnrollCount(res.data.length);
           const alreadyEnrolled = res.data.find(e => e.courseId === id);
           setEnrolled(!!alreadyEnrolled);
@@ -49,8 +50,11 @@ const CourseDetailsPage = () => {
         }
       }
     };
+  
     checkEnrollment();
   }, [user, id]);
+
+  console.log(user);
 
   const handleEnrollToggle = async () => {
     if (!user || enrolling) return;
@@ -78,7 +82,7 @@ const CourseDetailsPage = () => {
         setUserEnrollCount(prev => prev - 1);
 
         setTimeout(() => {
-          navigate('/courses');  // Unenroll হলে এখানে নিয়ে যাবে
+          navigate('/courses');  
         }, 1600);
 
         return;
@@ -101,11 +105,16 @@ const CourseDetailsPage = () => {
         });
       }
 
-      await axiosSecure.post('/enrollments', {
+      await axios.post('https://course-hub-server-delta.vercel.app/enrollments', {
         courseId: id,
         courseTitle: course.courseTitle,
         userEmail: user.email,
-      });
+      
+      },
+      {
+        withCredentials: true
+      }
+    );
 
       await axios.patch(`https://course-hub-server-delta.vercel.app/courses/${id}/seats`, {
         increment: -1,

@@ -6,6 +6,8 @@ import AuthContext from '../../FirebaseAuthContext/AuthContext';
 import { updateProfile } from 'firebase/auth';
 import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
+import { Helmet } from 'react-helmet';
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const { createUser, signInWithGoogle, signInWithGithub } = useContext(AuthContext);
@@ -68,25 +70,60 @@ const Register = () => {
   };
 
   // ✅ Handle Google/GitHub Login
-  const handleSocialLogin = async (provider) => {
+const handleSocialLogin = async (provider) => {
     try {
       let result;
+
       if (provider === 'google') {
         result = await signInWithGoogle();
       } else if (provider === 'github') {
         result = await signInWithGithub();
+      } else {
+        throw new Error('Unsupported provider');
       }
 
+      // ইউজারের ইমেইল চেক
+      if (!result.user.email) {
+        throw new Error('Email not available from this provider.');
+      }
+
+      console.log('User email:', result.user.email);
+
+      // Firebase থেকে ID Token নিয়ে backend-এ পাঠানো
       const firebaseToken = await result.user.getIdToken();
-      await sendTokenToServer(firebaseToken);
+
+      const response = await fetch('https://your-backend.com/jwt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: firebaseToken }),
+        credentials: 'include', // যদি আপনার backend cookie সেট করে থাকে
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get custom JWT');
+      }
+
+      const data = await response.json();
+      const customJwt = data.token;
+
+      // LocalStorage-এ JWT save করা
+      localStorage.setItem('customJwt', customJwt);
+
+      toast.success('Login Successful!');
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Social login failed.');
+      toast.error(err.message || 'Social login failed.');
     }
   };
 
+
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-500 to-purple-600 p-6">
+      <Helmet>
+        <title>Register || CourseHub</title> 
+      </Helmet>
       <div className="flex flex-col-reverse lg:flex-row items-center gap-10 w-full max-w-6xl">
         {/* Lottie Animation */}
         <div className="w-full max-w-md lg:max-w-lg">
