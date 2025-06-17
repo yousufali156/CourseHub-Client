@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { XCircle } from "lucide-react";
+import helmet from 'helmet';
 import AuthContext from "../FirebaseAuthContext/AuthContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://course-hub-server-delta.vercel.app";
