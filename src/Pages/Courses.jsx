@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // ✅ Fix for react-router-dom
 import axios from 'axios';
+import helmet from 'helmet';
+
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
