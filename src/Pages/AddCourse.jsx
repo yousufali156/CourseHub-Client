@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import AuthContext from '../FirebaseAuthContext/AuthContext';
 import { useNavigate } from 'react-router';
 import axiosSecure from '../../api/axiosSecure';
+import helmet from 'helmet';
 
 
 const AddCourse = () => {
