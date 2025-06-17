@@ -3,6 +3,8 @@ import ImageSlider from './Home/ImageSlider';
 import Hero from './Home/Hero';
 import HeroBanner from './Home/HeroBanner';
 import UpcomingCourse from './Shared/UpcomingCourse';
+import helmet from 'helmet';
+
 
 const Home = () => (
   <div className="p-6">
