@@ -5,6 +5,9 @@ import ContactMarquee from './ContactMarquee';
 const Contact = () => {
   return (
     <div>
+      <Helmet>
+        <title>Contact || CourseHub</title> 
+      </Helmet>
       <div className="container mx-auto p-6 my-8 rounded-lg shadow-xl border border-gray-200 w-full max-w-3xl">
 
         <h2 className="text-4xl font-bold text-center text-blue-500 mb-8">Contact Us</h2>

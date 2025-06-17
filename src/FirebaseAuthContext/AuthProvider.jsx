@@ -49,7 +49,7 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/logout`,
+        `${import.meta.env.VITE_API_BASE_URL || 'https://course-hub-server-delta.vercel.app'}/logout`,
         {},
         { withCredentials: true }
       );
@@ -71,7 +71,7 @@ const AuthProvider = ({ children }) => {
           const idToken = await currentUser.getIdToken();
 
           await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/jwt`,
+            `${import.meta.env.VITE_API_BASE_URL || 'https://course-hub-server-delta.vercel.app'}/jwt`,
             { token: idToken },
             { withCredentials: true } // ✅ Important for sending cookie
           );

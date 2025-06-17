@@ -15,12 +15,12 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const from = location.state?.from?.pathname || '/';
+  const from = '/';
 
   // ✅ Send Firebase Token -> Get Custom JWT
   const sendTokenToServer = async (firebaseToken) => {
     try {
-      const res = await axios.post('http://localhost:5000/jwt', { token: firebaseToken });
+      const res = await axios.post('https://course-hub-server-delta.vercel.app/jwt', { token: firebaseToken });
       const jwt = res.data.token;
       localStorage.setItem('jwt-token', jwt);
     } catch (err) {

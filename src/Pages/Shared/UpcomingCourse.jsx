@@ -46,6 +46,9 @@ const UpcomingCourse = () => {
 
   return (
     <section className="py-12 px-4 md:px-12 bg-base-100 transition-colors duration-300">
+      <Helmet>
+        <title>Upcoming Courses || CourseHub</title> 
+      </Helmet>
       <h2 className="text-4xl font-bold text-center text-blue-400 dark:text-purple-300 mb-10">
         Upcoming Courses
       </h2>

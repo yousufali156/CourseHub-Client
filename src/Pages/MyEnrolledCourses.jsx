@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { XCircle } from "lucide-react";
 import AuthContext from "../FirebaseAuthContext/AuthContext";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://course-hub-server-delta.vercel.app";
 
 const MyEnrolledCourses = () => {
   const { user } = useContext(AuthContext);
@@ -108,6 +108,9 @@ const MyEnrolledCourses = () => {
 
   return (
     <div className="container mx-auto p-6 my-8 bg-base-100 rounded-lg shadow-xl border border-gray-200">
+      <Helmet>
+        <title>My Enrolled Courses || CourseHub</title> 
+      </Helmet>
       <h2 className="text-4xl font-bold text-center text-blue-700 mb-8">
         My Enrolled Courses
       </h2>

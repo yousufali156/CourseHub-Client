@@ -21,7 +21,7 @@ const CourseDetailsPage = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/courses/${id}`);
+        const res = await axios.get(`https://course-hub-server-delta.vercel.app/courses/${id}`);
         setCourse(res.data);
       } catch (err) {
         console.error('Error fetching course:', err);
@@ -50,90 +50,90 @@ const CourseDetailsPage = () => {
     checkEnrollment();
   }, [user, id]);
 
-const handleEnrollToggle = async () => {
-  if (!user || enrolling) return;
+  const handleEnrollToggle = async () => {
+    if (!user || enrolling) return;
 
-  try {
-    setEnrolling(true);
+    try {
+      setEnrolling(true);
 
-    // If already enrolled ➝ UNENROLL
-    if (enrolled) {
-      await axiosSecure.delete(`/enrollments/${user.email}/${id}`);
+      // If already enrolled ➝ UNENROLL
+      if (enrolled) {
+        await axiosSecure.delete(`/enrollments/${user.email}/${id}`);
 
-      await axios.patch(`http://localhost:3000/courses/${id}/seats`, {
-        increment: 1,
+        await axios.patch(`https://course-hub-server-delta.vercel.app/courses/${id}/seats`, {
+          increment: 1,
+        });
+
+        Swal.fire({
+          icon: 'info',
+          title: 'Enrollment Cancelled',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        setEnrolled(false);
+        setCourse(prev => ({ ...prev, seats: prev.seats + 1 }));
+        setUserEnrollCount(prev => prev - 1);
+
+        setTimeout(() => {
+          navigate('/courses');  // Unenroll হলে এখানে নিয়ে যাবে
+        }, 1600);
+
+        return;
+      }
+
+      // Not enrolled ➝ ENROLL
+      if (course.seats <= 0) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'No Seats Left',
+          text: 'This course is full!',
+        });
+      }
+
+      if (userEnrollCount >= 3) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'Limit Reached',
+          text: 'You cannot enroll in more than 3 courses.',
+        });
+      }
+
+      await axiosSecure.post('/enrollments', {
+        courseId: id,
+        courseTitle: course.courseTitle,
+        userEmail: user.email,
+      });
+
+      await axios.patch(`https://course-hub-server-delta.vercel.app/courses/${id}/seats`, {
+        increment: -1,
       });
 
       Swal.fire({
-        icon: 'info',
-        title: 'Enrollment Cancelled',
+        icon: 'success',
+        title: 'Enrolled Successfully!',
         showConfirmButton: false,
         timer: 1500,
       });
 
-      setEnrolled(false);
-      setCourse(prev => ({ ...prev, seats: prev.seats + 1 }));
-      setUserEnrollCount(prev => prev - 1);
+      setEnrolled(true);
+      setCourse(prev => ({ ...prev, seats: prev.seats - 1 }));
+      setUserEnrollCount(prev => prev + 1);
 
       setTimeout(() => {
-        navigate('/courses');  // Unenroll হলে এখানে নিয়ে যাবে
+        navigate('/my-enrolled-courses');
       }, 1600);
-
-      return;
-    }
-
-    // Not enrolled ➝ ENROLL
-    if (course.seats <= 0) {
-      return Swal.fire({
-        icon: 'warning',
-        title: 'No Seats Left',
-        text: 'This course is full!',
+    } catch (err) {
+      console.error('Enrollment error:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Enrollment Failed',
+        text: err?.response?.data?.error || 'Something went wrong',
       });
+    } finally {
+      setEnrolling(false);
     }
-
-    if (userEnrollCount >= 3) {
-      return Swal.fire({
-        icon: 'warning',
-        title: 'Limit Reached',
-        text: 'You cannot enroll in more than 3 courses.',
-      });
-    }
-
-    await axiosSecure.post('/enrollments', {
-      courseId: id,
-      courseTitle: course.courseTitle,
-      userEmail: user.email,
-    });
-
-    await axios.patch(`http://localhost:3000/courses/${id}/seats`, {
-      increment: -1,
-    });
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Enrolled Successfully!',
-      showConfirmButton: false,
-      timer: 1500,
-    });
-
-    setEnrolled(true);
-    setCourse(prev => ({ ...prev, seats: prev.seats - 1 }));
-    setUserEnrollCount(prev => prev + 1);
-
-    setTimeout(() => {
-      navigate('/my-enrolled-courses');  // Enroll হলে এখানে নিয়ে যাবে
-    }, 1600);
-  } catch (err) {
-    console.error('Enrollment error:', err);
-    Swal.fire({
-      icon: 'error',
-      title: 'Enrollment Failed',
-      text: err?.response?.data?.error || 'Something went wrong',
-    });
-  } finally {
-    setEnrolling(false);
-  }
-};
+  };
 
 
 
@@ -147,6 +147,9 @@ const handleEnrollToggle = async () => {
 
   return (
     <div className="container mx-auto p-6 my-8 bg-base-300 rounded-lg shadow-xl">
+      <Helmet>
+        <title>Course Details || CourseHub</title>
+      </Helmet>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="lg:w-1/2">
           <img
@@ -166,15 +169,15 @@ const handleEnrollToggle = async () => {
               <p><strong>Duration:</strong> {course.duration}</p>
               <p><strong>Seats Left:</strong> {course.seats > 0 ? course.seats : 'No Seats Left'}</p>
               <p>
-  <strong>Start Date:</strong>{' '}
-  {course.timestamp
-    ? new Date(course.timestamp).toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : 'N/A'}
-</p>
+                <strong>Start Date:</strong>{' '}
+                {course.timestamp
+                  ? new Date(course.timestamp).toLocaleDateString('en-GB', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })
+                  : 'N/A'}
+              </p>
             </div>
 
             <h2 className="text-2xl font-semibold mb-2">Course Overview</h2>
@@ -189,16 +192,16 @@ const handleEnrollToggle = async () => {
                 ${!user || enrolling || (course.seats <= 0 && !enrolled)
                   ? 'bg-gray-400 cursor-not-allowed'
                   : enrolled
-                  ? 'bg-red-600 hover:bg-red-700'
-                  : 'bg-blue-600 hover:bg-blue-700'}`}
+                    ? 'bg-red-600 hover:bg-red-700'
+                    : 'bg-blue-600 hover:bg-blue-700'}`}
             >
               {!user
                 ? 'Login to Enroll'
                 : enrolling
-                ? 'Processing...'
-                : enrolled
-                ? 'Unenroll'
-                : 'Enroll Now'}
+                  ? 'Processing...'
+                  : enrolled
+                    ? 'Unenroll'
+                    : 'Enroll Now'}
             </button>
           </div>
         </div>

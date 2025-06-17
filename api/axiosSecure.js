@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 const axiosSecure = axios.create({
-  baseURL: 'http://localhost:3000', 
+  baseURL: 'https://course-hub-server-delta.vercel.app', 
   withCredentials: true, 
 });
 

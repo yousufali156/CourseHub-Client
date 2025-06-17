@@ -6,6 +6,9 @@ import AboutTeamPage from './AboutTeamPage';
 const About = () => {
   return (
     <div className="container mx-auto px-4 py-8">
+      <Helmet>
+        <title>About || CourseHub</title> 
+      </Helmet>
       <motion.section
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}

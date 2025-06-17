@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import NotFoundCourse from '../Components/NotFoundCourse';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://course-hub-server-delta.vercel.app';
 
 const CourseDetailsPageButton = () => {
   const { id } = useParams();

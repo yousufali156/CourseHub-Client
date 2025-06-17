@@ -9,7 +9,7 @@ const Courses = () => {
 
   useEffect(() => {
     // ✅ Fetch all courses (NO JWT)
-    fetch('http://localhost:3000/courses')
+    fetch('https://course-hub-server-delta.vercel.app/courses')
       .then(res => res.json())
       .then(data => {
         const sorted = data.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
@@ -18,7 +18,7 @@ const Courses = () => {
       .catch(error => console.error("❌ Error fetching courses:", error));
 
     // ✅ Fetch popular courses (NO JWT)
-    axios.get('http://localhost:3000/popular-courses')
+    axios.get('https://course-hub-server-delta.vercel.app/popular-courses')
       .then(res => setPopularCourses(res.data))
       .catch(err => console.error("❌ Error fetching popular courses:", err));
   }, []);
@@ -27,6 +27,9 @@ const Courses = () => {
 
   return (
     <div className="p-6 md:p-10 bg-base-300 space-y-12">
+      <Helmet>
+        <title>All Courses || CourseHub</title>
+      </Helmet>
       <div className="flex justify-between items-center">
         <h2 className="text-2xl md:text-3xl font-bold">Latest Courses</h2>
         <Link to="/courses" className="text-green-500 hover:underline font-medium">View All</Link>

@@ -19,7 +19,7 @@ const Login = () => {
   // ✅ JWT Function: get JWT from backend after Firebase login
   const getCustomJwt = async (firebaseUser) => {
     const idToken = await firebaseUser.getIdToken();
-    const res = await axios.post('http://localhost:3000/jwt', { token: idToken });
+    const res = await axios.post('https://course-hub-server-delta.vercel.app/jwt', { token: idToken });
     const jwt = res.data.token;
     localStorage.setItem('access-token', jwt); // Store custom JWT
   };

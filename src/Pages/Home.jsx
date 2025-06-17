@@ -6,6 +6,9 @@ import UpcomingCourse from './Shared/UpcomingCourse';
 
 const Home = () => (
   <div className="p-6">
+    <Helmet>
+        <title>Home || CourseHub</title> 
+      </Helmet>
     <HeroBanner />
     <Hero />
     <UpcomingCourse></UpcomingCourse>

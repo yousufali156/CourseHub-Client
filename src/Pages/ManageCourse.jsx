@@ -82,6 +82,9 @@ const ManageCourse = () => {
 
   return (
     <div className="container mx-auto p-6 my-8 bg-base-300 rounded-lg shadow-xl border border-gray-200">
+      <Helmet>
+        <title>Manage Courses || CourseHub</title> 
+      </Helmet>
       <h2 className="text-4xl font-bold text-center text-blue-500 mb-8">Manage Your Courses</h2>
 
       {courses.length === 0 ? (

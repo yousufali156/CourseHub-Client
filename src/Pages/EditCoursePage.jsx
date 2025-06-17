@@ -112,6 +112,9 @@ const EditCoursePage = () => {
 
     return (
         <div className="container mx-auto p-6 my-8 bg-base-300 rounded-lg shadow-xl border border-gray-200 w-full max-w-2xl">
+            <Helmet>
+                <title>Edit Course || CourseHub</title>
+            </Helmet>
             <h2 className="text-4xl font-bold text-center text-blue-500 mb-8">Edit Course</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Course Title */}

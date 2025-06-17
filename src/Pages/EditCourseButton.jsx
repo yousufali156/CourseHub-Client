@@ -22,7 +22,7 @@ const EditCourseButton = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-const res = await axios.get(`http://localhost:3000/courses/${id}`);
+const res = await axios.get(`https://course-hub-server-delta.vercel.app/courses/${id}`);
         const data = res.data;
         setCourseTitle(data.courseTitle);
         setShortDescription(data.shortDescription);
@@ -51,7 +51,7 @@ const res = await axios.get(`http://localhost:3000/courses/${id}`);
     }
 
     try {
-      await axios.put(`http://localhost:3000/course/${id}`, {
+      await axios.put(`https://course-hub-server-delta.vercel.app/course/${id}`, {
         courseTitle,
         shortDescription,
         description,
