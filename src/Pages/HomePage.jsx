@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "../Components/Navbar/Navbar";
-import helmet from 'helmet';
+
 
 
 const HomePage = () => {
