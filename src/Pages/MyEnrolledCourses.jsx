@@ -58,27 +58,20 @@ const MyEnrolledCourses = () => {
     }
 
     try {
-      const deleteRes = await axios.delete(`${API_BASE_URL}/enrollments`, {
-        data: {
-          userEmail: user.email,
-          courseId: selectedEnrollment.courseId,
-        },
+      const deleteRes = await axios.delete(`${API_BASE_URL}/enrollments/${user.email}/${selectedEnrollment.courseId}`, {
         withCredentials: true,
       });
 
       if (deleteRes.status === 200 || deleteRes.status === 204) {
         toast.success("Enrollment removed successfully");
-
         setEnrolledCourses((prev) =>
           prev.filter((e) => e._id !== selectedEnrollment._id)
         );
-
         setCoursesWithSeats((prev) => ({
           ...prev,
           [selectedEnrollment.courseId]:
             (prev[selectedEnrollment.courseId] || 0) + 1,
         }));
-
         setShowRemoveModal(false);
         setSelectedEnrollment(null);
       } else {

@@ -32,7 +32,7 @@ const Register = () => {
 
   // ✅ Handle Register Form Submit
   const handleRegister = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     setError('');
 
     const form = e.target;
@@ -82,7 +82,7 @@ const handleSocialLogin = async (provider) => {
         throw new Error('Unsupported provider');
       }
 
-      // ইউজারের ইমেইল চেক
+     
       if (!result.user.email) {
         throw new Error('Email not available from this provider.');
       }
@@ -96,7 +96,7 @@ const handleSocialLogin = async (provider) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: firebaseToken }),
-        credentials: 'include', // যদি আপনার backend cookie সেট করে থাকে
+        credentials: 'include', 
       });
 
       if (!response.ok) {

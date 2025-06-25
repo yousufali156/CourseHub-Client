@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // ✅ Fix for react-router-dom
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Helmet } from "react-helmet";
-
-
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -11,18 +9,20 @@ const Courses = () => {
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    // ✅ Fetch all courses (NO JWT)
+    // Fetch all courses (NO JWT)
     fetch('https://course-hub-server-delta.vercel.app/courses')
       .then(res => res.json())
       .then(data => {
-        const sorted = data.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+        const sorted = data
+          .filter(course => course._id) // Filter valid courses
+          .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
         setCourses(sorted);
       })
       .catch(error => console.error("❌ Error fetching courses:", error));
 
-    // ✅ Fetch popular courses (NO JWT)
+    // Fetch popular courses (NO JWT)
     axios.get('https://course-hub-server-delta.vercel.app/popular-courses')
-      .then(res => setPopularCourses(res.data))
+      .then(res => setPopularCourses(res.data.filter(c => c._id))) // Only courses with _id
       .catch(err => console.error("❌ Error fetching popular courses:", err));
   }, []);
 
@@ -33,6 +33,7 @@ const Courses = () => {
       <Helmet>
         <title>All Courses || CourseHub</title>
       </Helmet>
+
       <div className="flex justify-between items-center">
         <h2 className="text-2xl md:text-3xl font-bold">Latest Courses</h2>
         <Link to="/courses" className="text-green-500 hover:underline font-medium">View All</Link>
@@ -42,14 +43,20 @@ const Courses = () => {
         {visibleCourses.map((course) => (
           <div key={course._id} className="bg-base-300 shadow rounded-lg overflow-hidden">
             <img
-              src={course.imageURL}
+              src={course.imageURL || 'https://placehold.co/600x400/ECECEC/000000?text=No+Image'}
               alt={course.courseTitle}
-              className="w-full h-50 md:h-80 object-cover"
+              className="w-full h-52 md:h-80 object-cover"
             />
             <div className="p-3">
               <h3 className="text-sm font-semibold bg-base-300">{course.courseTitle}</h3>
               <p className="text-xs bg-base-300 mb-2">
-                {new Date(course.timestamp).toLocaleDateString()}
+                {course.timestamp
+                  ? new Date(course.timestamp).toLocaleDateString('en-GB', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  : 'No date'}
               </p>
               <Link to={`/course-details/${course._id}`} className="w-full block">
                 <button className="btn btn-sm btn-primary w-full">View Details</button>
@@ -73,8 +80,8 @@ const Courses = () => {
       {/* Gradient bar */}
       <div className="relative w-full h-1 mt-12 mb-12 overflow-hidden rounded-full bg-blue-400">
         <div
-          className="absolute inset-0 w-full h-full 
-            bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 to-blue-500 
+          className="absolute inset-0 w-full h-full
+            bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 to-blue-500
             bg-[length:200%_200%] animate-gradient-x"
         ></div>
       </div>

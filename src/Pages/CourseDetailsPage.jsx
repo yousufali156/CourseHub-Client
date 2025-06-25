@@ -7,8 +7,6 @@ import axios from 'axios';
 import axiosSecure from '../../api/axiosSecure';
 import { Helmet } from "react-helmet";
 
-
-
 const CourseDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -20,7 +18,7 @@ const CourseDetailsPage = () => {
   const [enrolling, setEnrolling] = useState(false);
   const [userEnrollCount, setUserEnrollCount] = useState(0);
 
-  // Fetch course
+  // Fetch course details
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -36,25 +34,25 @@ const CourseDetailsPage = () => {
     fetchCourse();
   }, [id, navigate]);
 
-  // Check enrollment
+  // Check user enrollment and count
   useEffect(() => {
     const checkEnrollment = async () => {
       if (user) {
         try {
-          const res = await axios.get(`https://course-hub-server-delta.vercel.app/my-enrolled-courses/${user.email}`);
+          const res = await axiosSecure.get(`/my-enrolled-courses/${user.email}`);
           setUserEnrollCount(res.data.length);
           const alreadyEnrolled = res.data.find(e => e.courseId === id);
           setEnrolled(!!alreadyEnrolled);
         } catch (err) {
           console.error('Error checking enrollment:', err);
         }
+      } else {
+        setUserEnrollCount(0);
+        setEnrolled(false);
       }
     };
-  
     checkEnrollment();
   }, [user, id]);
-
-  console.log(user);
 
   const handleEnrollToggle = async () => {
     if (!user || enrolling) return;
@@ -62,33 +60,27 @@ const CourseDetailsPage = () => {
     try {
       setEnrolling(true);
 
-      // If already enrolled ➝ UNENROLL
+      // Unenroll case
       if (enrolled) {
         await axiosSecure.delete(`/enrollments/${user.email}/${id}`);
-
-        await axios.patch(`https://course-hub-server-delta.vercel.app/courses/${id}/seats`, {
-          increment: 1,
-        });
-
+        // Increase seats count
+        await axiosSecure.patch(`/courses/${id}/seats`, { increment: 1 });
         Swal.fire({
           icon: 'info',
           title: 'Enrollment Cancelled',
           showConfirmButton: false,
           timer: 1500,
         });
-
         setEnrolled(false);
         setCourse(prev => ({ ...prev, seats: prev.seats + 1 }));
         setUserEnrollCount(prev => prev - 1);
-
         setTimeout(() => {
-          navigate('/courses');  
+          navigate('/courses');
         }, 1600);
-
         return;
       }
 
-      // Not enrolled ➝ ENROLL
+      // Enroll case
       if (course.seats <= 0) {
         return Swal.fire({
           icon: 'warning',
@@ -105,20 +97,13 @@ const CourseDetailsPage = () => {
         });
       }
 
-      await axios.post('https://course-hub-server-delta.vercel.app/enrollments', {
+      await axiosSecure.post('/enrollments', {
         courseId: id,
         courseTitle: course.courseTitle,
         userEmail: user.email,
-      
-      },
-      {
-        withCredentials: true
-      }
-    );
-
-      await axios.patch(`https://course-hub-server-delta.vercel.app/courses/${id}/seats`, {
-        increment: -1,
       });
+
+      await axiosSecure.patch(`/courses/${id}/seats`, { increment: -1 });
 
       Swal.fire({
         icon: 'success',
@@ -134,6 +119,7 @@ const CourseDetailsPage = () => {
       setTimeout(() => {
         navigate('/my-enrolled-courses');
       }, 1600);
+
     } catch (err) {
       console.error('Enrollment error:', err);
       Swal.fire({
@@ -145,8 +131,6 @@ const CourseDetailsPage = () => {
       setEnrolling(false);
     }
   };
-
-
 
   if (pageLoading) {
     return <div className="text-center py-10 text-base-300">Loading course details...</div>;
@@ -176,8 +160,8 @@ const CourseDetailsPage = () => {
             <p className="mb-4">{course.shortDescription}</p>
 
             <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-              <p><strong>Instructor:</strong> {course.instructorName}</p>
-              <p><strong>Duration:</strong> {course.duration}</p>
+              <p><strong>Instructor:</strong> {course.instructorName || 'N/A'}</p>
+              <p><strong>Duration:</strong> {course.duration || 'N/A'}</p>
               <p><strong>Seats Left:</strong> {course.seats > 0 ? course.seats : 'No Seats Left'}</p>
               <p>
                 <strong>Start Date:</strong>{' '}
@@ -192,7 +176,7 @@ const CourseDetailsPage = () => {
             </div>
 
             <h2 className="text-2xl font-semibold mb-2">Course Overview</h2>
-            <p>{course.fullDescription}</p>
+            <p>{course.fullDescription || 'No description available.'}</p>
           </div>
 
           <div className="mt-6">

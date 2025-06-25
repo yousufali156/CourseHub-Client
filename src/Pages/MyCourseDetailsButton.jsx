@@ -4,6 +4,7 @@ import AuthContext from '../FirebaseAuthContext/AuthContext';
 import Swal from 'sweetalert2';
 import NotFoundCourse from '../Components/NotFoundCourse';
 import axios from 'axios';
+import axiosSecure from '../../api/axiosSecure';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://course-hub-server-delta.vercel.app';
 
@@ -55,21 +56,16 @@ const CourseDetailsPageButton = () => {
 
     try {
       if (enrolled) {
-        await axios.delete(`${API_BASE_URL}/enrollments`, {
-          data: { userEmail: user.email, courseId: id },
+        await axios.delete(`${API_BASE_URL}/enrollments/${user.email}/${id}`, {
+          withCredentials: true,
         });
-
-        await axios.patch(`${API_BASE_URL}/courses/${id}/seats`, {
-          seats: course.seats + 1,
-        });
-
+        await axios.patch(`${API_BASE_URL}/courses/${id}/seats`, { increment: 1 });
         Swal.fire({
-          icon: 'success',
-          title: 'Unenrolled Successfully!',
+          icon: 'info',
+          title: 'Enrollment Cancelled',
           showConfirmButton: false,
           timer: 1500,
         });
-
         setEnrolled(false);
         setCourse(prev => ({ ...prev, seats: prev.seats + 1 }));
         setUserEnrollCount(prev => prev - 1);
@@ -96,11 +92,11 @@ const CourseDetailsPageButton = () => {
         courseId: id,
         courseTitle: course.courseTitle,
         userEmail: user.email,
+      }, {
+        withCredentials: true
       });
 
-      await axios.patch(`${API_BASE_URL}/courses/${id}/seats`, {
-        seats: course.seats - 1,
-      });
+      await axios.patch(`${API_BASE_URL}/courses/${id}/seats`, { increment: -1 });
 
       Swal.fire({
         icon: 'success',
