@@ -103,7 +103,7 @@ const AddCourse = () => {
           />
         </div>
 
-        {/* Duration */}
+        {/* Duration all */}
         <div>
           <label className="block font-medium mb-2">Duration</label>
           <input

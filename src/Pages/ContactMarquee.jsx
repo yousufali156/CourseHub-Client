@@ -52,6 +52,7 @@ const ContactMarquee = () => {
       <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-black to-transparent z-10" />
       <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-black to-transparent z-10" />
 
+      {/* Marquee content */}
       <ul
         ref={marqueeRef}
         className="flex h-full items-center gap-12 animate-marquee"

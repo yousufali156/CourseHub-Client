@@ -46,9 +46,9 @@ const UpcomingCourse = () => {
   const displayedCourses = showAll ? courses : courses.slice(0, 6);
 
   return (
-    <section className="py-12 px-4 md:px-12 bg-base-100 transition-colors duration-300">
+    <section className="py-12 container mx-auto px-4 md:px-12 bg-base-100 transition-colors duration-300">
       <Helmet>
-        <title>Upcoming Courses || CourseHub</title> 
+        <title>Upcoming Courses || CourseHub</title>
       </Helmet>
       <h2 className="text-4xl font-bold text-center text-blue-400 dark:text-purple-300 mb-10">
         Upcoming Courses
@@ -66,24 +66,34 @@ const UpcomingCourse = () => {
               {displayedCourses.map((course, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 5, y: 30 }}
+                  animate={{ opacity: 5, y: 0 }}
                   exit={{ opacity: 0, y: 30 }}
                   transition={{ delay: index * 0.04 }}
                   whileHover={{ scale: 1.02 }}
                 >
-                  <Card className="shadow-md hover:shadow-xl transition-shadow duration-300 h-full">
+                  <Card
+                    className="shadow-md transition-all duration-300 h-full 
+                     bg-base-100 
+                     hover:bg-gradient-to-r 
+                     hover:from-[#422fd9] hover:to-[#1c5af9] 
+                     hover:text-white dark:hover:text-white 
+                     hover:shadow-xl"
+                  >
                     <CardContent className="p-5 flex flex-col h-full justify-between">
                       <div>
                         <div className="flex items-center gap-4 mb-3">
                           {getIcon(course.courseName)}
-                          <h3 className="text-xl font-semibold text-blue-500 dark:text-purple-200">
+                          <h3 className="text-xl font-semibold text-blue-500 dark:text-purple-200 group-hover:text-white transition-colors duration-300">
                             {course.courseName}
                           </h3>
                         </div>
-                        <p className="text-sm text-base-content mb-3">{course.description}</p>
+                        <p className="text-sm  transition-colors duration-300 mb-3">
+                          {course.description}
+                        </p>
                       </div>
-                      <ul className="text-sm text-base-content">
+
+                      <ul className="text-sm  transition-colors duration-300">
                         <li><strong>Fee:</strong> {course.tuitionFee} BDT</li>
                         <li><strong>Duration:</strong> {course.duration}</li>
                         <li><strong>Date:</strong> {course.date}</li>
@@ -94,6 +104,7 @@ const UpcomingCourse = () => {
               ))}
             </AnimatePresence>
           </motion.div>
+
 
           <div className="flex justify-center mt-10">
             <Button

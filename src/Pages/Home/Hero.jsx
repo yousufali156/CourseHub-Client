@@ -60,50 +60,61 @@ const Hero = () => {
     }
 
     return (
-        <div className="container mx-auto mt-12 mb-12 px-4 py-8">                  
+        <div className="container mx-auto mt-12 mb-12 px-4 py-8">
             <section className='mt-2 mb-2   px-4 py-8'>
                 <Courses />
-            </section>           
-          
+            </section>
+
             {/* Why Choose Section */}
-            <section className="mb-12 bg-blue-700 text-white p-8 rounded-lg shadow-xl">
-                <h2 className="text-4xl font-bold text-center mb-6">Why Choose CourseHub?</h2>
+            <section className="mb-12 p-8 rounded-lg transition-colors duration-300">
+                <h2 className="text-4xl font-bold text-center mb-6 ">
+                    Why Choose CourseHub?
+                </h2>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.6 }}
-                        className="p-6 bg-blue-800 rounded-lg shadow-md"
-                    >
-                        <Image size={50} className="text-yellow-300 mb-4 mx-auto" />
-                        <h3 className="text-2xl font-semibold mb-2">Expert Instructors</h3>
-                        <p className="text-blue-200">Learn from industry leaders and experienced professionals.</p>
-                    </motion.div>
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="p-6 bg-blue-800 rounded-lg shadow-md"
-                    >
-                        <Clock size={50} className="text-yellow-300 mb-4 mx-auto" />
-                        <h3 className="text-2xl font-semibold mb-2">Practical Skills</h3>
-                        <p className="text-blue-200">Gain hands-on experience with real-world projects.</p>
-                    </motion.div>
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        className="p-6 bg-blue-800 rounded-lg shadow-md"
-                    >
-                        <BookOpen size={50} className="text-yellow-300 mb-4 mx-auto" />
-                        <h3 className="text-2xl font-semibold mb-2">Certification</h3>
-                        <p className="text-blue-200">Earn certificates to boost your career.</p>
-                    </motion.div>
+                    {[
+                        {
+                            title: "Expert Instructors",
+                            description: "Learn from industry leaders and experienced professionals.",
+                            icon: <Image size={50} className="text-yellow-400 mb-4 mx-auto" />
+                        },
+                        {
+                            title: "Practical Skills",
+                            description: "Gain hands-on experience with real-world projects.",
+                            icon: <Clock size={50} className="text-yellow-400 mb-4 mx-auto" />
+                        },
+                        {
+                            title: "Certification",
+                            description: "Earn certificates to boost your career.",
+                            icon: <BookOpen size={50} className="text-yellow-400 mb-4 mx-auto" />
+                        }
+                    ].map((item, idx) => (
+                        <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.5, delay: idx * 0.2 }}
+                            className="p-6 rounded-lg shadow-md bg-base-100 transition-all duration-300 
+             hover:bg-gradient-to-r hover:from-[#422fd9] hover:to-[#1c5af9] 
+             hover:text-white dark:hover:text-white"
+                        >
+
+
+                            {item.icon}
+                            <h3 className="text-2xl font-semibold mb-2 transition-colors duration-300">
+                                {item.title}
+                            </h3>
+                            <p className="transition-colors duration-300">
+                                {item.description}
+                            </p>
+                        </motion.div>
+                    ))}
                 </div>
             </section>
+
+
+
 
             {/* CTA Section */}
             <section className=" p-8 rounded-lg shadow-xl">

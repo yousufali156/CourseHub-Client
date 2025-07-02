@@ -11,7 +11,7 @@ const heroData = [
         desc: "Boost your skills with 20% off—now's the perfect time to invest in yourself.",
         img: "https://i.ibb.co/DDY5Zkjk/20.png",
     },
-    
+
     {
         title: "🎯 40% Discount on All Courses!",
         desc: "Don't miss this chance—get certified and save big with 40% off!",
@@ -77,7 +77,7 @@ const HeroBanner = () => {
     }, [currentIndex]);
 
     return (
-        <div className="bg-base-300 flex flex-col items-center justify-center rounded-4xl container mx-auto overflow-hidden relative py-6">
+        <div className=" flex flex-col items-center justify-center rounded-4xl container mx-auto overflow-hidden relative py-6">
 
             <div
                 className="relative w-[80%] max-w-[1200px] h-[400px] perspective-[1000px] mt-0"
