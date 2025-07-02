@@ -6,7 +6,7 @@ A full-featured web application where users can browse available courses, enroll
 
 ## 🚀 Live Website
 
-🔗 [Live Link]> [ https://your-server-domain.vercel.app](https://coursehub-7fd47.web.app/)
+🔗 [Live Link]> [https://coursehub-7fd47.web.app/](https://coursehub-7fd47.web.app/)
 
 
 
@@ -76,8 +76,15 @@ This project was created to practice and demonstrate real-world full-stack devel
 ## 📁 Folder Structure
 
 /client
-├── /src
-│ ├── /pages
-│ ├── /components
-│ ├── /contexts
-│ └── /routes
+├── /src<br/>
+│ ├── /pages<br/>
+│ ├── /components<br/>
+│ ├── /contexts<br/>
+│ └── /routes<br/>
+More and More
+
+<br/>
+
+## 💰 Support Me
+
+<p align="center"> <a href="https://www.buymeacoffee.com/yousufali156" target="_blank"> <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60" style="border-radius:12px" /> </a> </p>
