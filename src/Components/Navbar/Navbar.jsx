@@ -48,11 +48,11 @@ const Navbar = () => {
       <div className="container mx-auto flex flex-wrap justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
-  <img src="/logoo.png" alt="Logo" className="h-10 w-10 rounded-full object-cover" />
-  <span className="text-white text-2xl font-bold">
-    Course<span className="text-yellow-300">Hub</span>
-  </span>
-</Link>
+          <img src="/logoo.png" alt="Logo" className="h-10 w-10 rounded-full object-cover" />
+          <span className="text-white text-2xl font-bold">
+            Course<span className="text-yellow-300">Hub</span>
+          </span>
+        </Link>
 
 
         {/* Hamburger */}
