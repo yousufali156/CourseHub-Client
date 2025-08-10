@@ -141,7 +141,7 @@ const Courses = () => {
                   : 'No date'}
               </p>
               <p className="text-xs ">
-                👥 {course.enrolledCount || course.views || 0} learners
+                👥 {course.enrolledCount || 0} learners
               </p>
               <Link to={`/course-details/${course._id}`} className="w-full block">
                 <button className="btn btn-sm btn-primary w-full">View Details</button>

@@ -110,7 +110,7 @@ const Navbar = () => {
               />
 
               {showMenu && (
-                <div className="absolute right-0 mt-2 w-48  rounded-md shadow-lg py-1 z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
                   <span className="block px-4 py-2 text-sm truncate">{user.displayName || user.email}</span>
                   <hr className="border-gray-200" />
                   <button

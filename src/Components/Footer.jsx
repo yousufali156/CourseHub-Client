@@ -52,11 +52,11 @@ const Footer = () => {
 
         {/* Quick Links */}
         <div>
-          <h3 className="text-xl font-semibold mb-3">Quick Links</h3>
+          <h3 className="text-xl font-semibold mb-3">Useful Links</h3>
           <ul className="space-y-2 text-gray-300">
-            <li><a href="/privacy" className="hover:underline">Privacy Policy</a></li>
-            <li><a href="/terms" className="hover:underline">Terms of Service</a></li>
-            <li><a href="/help" className="hover:underline">Help & Support</a></li>
+            <li><a href="/" className="hover:underline">Home</a></li>
+            <li><a href="/courses" className="hover:underline">Courses</a></li>
+            <li><a href="/contact" className="hover:underline">Contact</a></li>
           </ul>
         </div>
 
