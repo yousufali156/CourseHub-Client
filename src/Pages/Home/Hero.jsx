@@ -95,26 +95,17 @@ const Hero = () => {
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true, amount: 0.3 }}
                             transition={{ duration: 0.5, delay: idx * 0.2 }}
-                            className="p-6 rounded-lg shadow-md bg-base-100 transition-all duration-300 
-             hover:bg-gradient-to-r hover:from-[#422fd9] hover:to-[#1c5af9] 
-             hover:text-white dark:hover:text-white"
+                            className="p-6 rounded-lg shadow-md bg-base-100 h-[280px] flex flex-col items-center justify-center
+          hover:bg-gradient-to-r hover:from-[#422fd9] hover:to-[#1c5af9]
+          hover:text-white dark:hover:text-white"
                         >
-
-
                             {item.icon}
-                            <h3 className="text-2xl font-semibold mb-2 transition-colors duration-300">
-                                {item.title}
-                            </h3>
-                            <p className="transition-colors duration-300">
-                                {item.description}
-                            </p>
+                            <h3 className="text-2xl font-semibold mb-2">{item.title}</h3>
+                            <p>{item.description}</p>
                         </motion.div>
                     ))}
                 </div>
             </section>
-
-
-
 
             {/* CTA Section */}
             <section className=" p-8 rounded-lg shadow-xl">
