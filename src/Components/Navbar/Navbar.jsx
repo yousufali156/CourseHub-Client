@@ -31,21 +31,21 @@ const Navbar = () => {
         setShowMenu(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const navLinkClass = (path) =>
     location.pathname === path
-      ? 'text-yellow-300 font-semibold'
+      ? 'text-yellow-300 font-semibold border-b-2 border-yellow-300 pb-1'
       : 'text-white hover:text-yellow-300 transition';
 
   if (loading) return null;
 
   return (
-    <nav className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 shadow-md sticky top-0 z-50">
-      <div className="container mx-auto flex flex-wrap justify-between items-center">
+    <nav className="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-md sticky top-0 z-50 w-full p-3">
+      <div className="container px-4 mx-auto flex flex-wrap justify-between items-center">
+        
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
           <img src="/logoo.png" alt="Logo" className="h-10 w-10 rounded-full object-cover" />
@@ -54,9 +54,8 @@ const Navbar = () => {
           </span>
         </Link>
 
-
-        {/* Hamburger */}
-        <div className='lg:hidden flex items-center'>
+        {/* Hamburger + Theme */}
+        <div className="lg:hidden flex items-center gap-3">
           <ThemeToggle />
           <button
             className="lg:hidden text-white"
@@ -86,7 +85,7 @@ const Navbar = () => {
               <li><Link to="/add-course" className={navLinkClass('/add-course')}>Add Course</Link></li>
               <li><Link to="/manage-course" className={navLinkClass('/manage-course')}>Manage Course</Link></li>
               <li><Link to="/my-enrolled-courses" className={navLinkClass('/my-enrolled-courses')}>My Enrolled</Link></li>
-              <li><Link to="/upcoming-course" className={navLinkClass('/upcoming-course')}>Upcoming </Link></li>
+              <li><Link to="/upcoming-course" className={navLinkClass('/upcoming-course')}>Upcoming</Link></li>
               <li><Link to="/contact" className={navLinkClass('/contact')}>Contact</Link></li>
             </>
           )}
@@ -108,14 +107,13 @@ const Navbar = () => {
                 onClick={() => setShowMenu(!showMenu)}
                 className="w-10 h-10 rounded-full cursor-pointer border-2 border-yellow-300 hover:scale-105 transition"
               />
-
               {showMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
+                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 bg-gradient-to-r from-indigo-500 to-blue-500">
                   <span className="block px-4 py-2 text-sm truncate">{user.displayName || user.email}</span>
                   <hr className="border-gray-200" />
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 flex items-center text-red-600"
+                    className="w-full text-left px-4 py-2 flex items-center text-red-600 hover:bg-gray-100"
                   >
                     <LogOut size={16} className="mr-2" /> Logout
                   </button>
@@ -136,7 +134,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="w-full mt-4 lg:hidden space-y-2">
+          <div className="w-full mt-4 lg:hidden bg-indigo-700 p-4 rounded-lg space-y-2">
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Home</Link>
             <Link to="/courses" onClick={() => setIsMobileMenuOpen(false)} className="block text-white hover:bg-blue-600 px-4 py-2 rounded">Courses</Link>
             {user && (
