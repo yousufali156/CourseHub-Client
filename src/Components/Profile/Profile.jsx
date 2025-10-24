@@ -1,9 +1,16 @@
-/* eslint-disable no-unused-vars */
 import React, { useContext, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FaUser, FaEnvelope, FaImage, FaSpinner } from "react-icons/fa";
+import {
+  FaUser,
+  FaEnvelope,
+  FaImage,
+  FaSpinner,
+  FaPhone,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 import AuthContext from "../../FirebaseAuthContext/AuthContext";
+import axiosSecure from "../../../api/axiosSecure"; // Ensure this path is correct
 
 // Animation variants
 const containerVariants = {
@@ -21,9 +28,12 @@ const Profile = () => {
   // State for form fields
   const [name, setName] = useState("");
   const [photoURL, setPhotoURL] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isFetchingDB, setIsFetchingDB] = useState(true);
 
-  // Populate form fields when user data is available
+  // Step 1: Populate form fields from Firebase Auth
   useEffect(() => {
     if (user) {
       setName(user.displayName || "");
@@ -31,20 +41,56 @@ const Profile = () => {
     }
   }, [user]);
 
+  // Step 2: Fetch and populate additional fields from MongoDB
+  useEffect(() => {
+    if (user?.email) {
+      const fetchUserDataFromDB = async () => {
+        setIsFetchingDB(true);
+        try {
+          // Fetch additional user data from your /users/:email endpoint
+          const { data } = await axiosSecure.get(`/users/${user.email}`);
+          if (data) {
+            setPhone(data.phone || "");
+            setAddress(data.address || "");
+          }
+        } catch (error) {
+          console.error("Failed to fetch user data from DB:", error);
+          // Don't show a toast, just log the error
+        } finally {
+          setIsFetchingDB(false);
+        }
+      };
+
+      fetchUserDataFromDB();
+    }
+  }, [user?.email]);
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsUpdating(true);
 
     try {
-      // Call the updateUserProfile function from AuthContext
+      // --- Step 1: Update Firebase Authentication ---
+      // This updates user.displayName and user.photoURL in Firebase
       await updateUserProfile(name, photoURL);
-      toast.success("Profile updated successfully!");
-      
+      toast.success("Firebase profile updated!");
+
+      // --- Step 2: Update MongoDB Database ---
+      // This calls your PUT /users/:email endpoint
+      const userDataToSave = {
+        name: name,
+        photoURL: photoURL,
+        phone: phone,
+        address: address,
+      };
+
+      await axiosSecure.put(`/users/${user.email}`, userDataToSave);
+      toast.success("Database profile saved!");
+
       // Manually trigger a page reload to show updated user info everywhere
       // This is often needed as auth.currentUser updates can be slow to propagate
-      window.location.reload(); 
-
+      window.location.reload();
     } catch (error) {
       toast.error(`Update failed: ${error.message}`);
       console.error("Profile update error:", error);
@@ -53,7 +99,7 @@ const Profile = () => {
     }
   };
 
-  if (authLoading) {
+  if (authLoading || isFetchingDB) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <FaSpinner className="animate-spin text-4xl text-blue-500" />
@@ -82,7 +128,12 @@ const Profile = () => {
         {/* Profile Header */}
         <div className="flex flex-col items-center mb-6">
           <img
-            src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'User'}&background=random`}
+            src={
+              user.photoURL ||
+              `https://ui-avatars.com/api/?name=${
+                user.displayName || "User"
+              }&background=random`
+            }
             alt="Profile"
             className="w-28 h-28 rounded-full object-cover border-4 border-blue-500 shadow-lg mb-4"
           />
@@ -162,6 +213,52 @@ const Profile = () => {
             </div>
           </div>
 
+          {/* Phone Number (New) */}
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              Phone Number
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <FaPhone className="text-gray-400" />
+              </span>
+              <input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full pl-10 p-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your phone number"
+              />
+            </div>
+          </div>
+
+          {/* Address (New) */}
+          <div>
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              Address
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <FaMapMarkerAlt className="text-gray-400" />
+              </span>
+              <input
+                id="address"
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full pl-10 p-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your address"
+              />
+            </div>
+          </div>
+
           {/* Submit Button */}
           <div>
             <button
@@ -186,3 +283,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
