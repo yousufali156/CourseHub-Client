@@ -46,9 +46,10 @@ const App = () => {
     createRoutesFromElements(
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
 
         <Route path="/add-course" element={<PrivateRoute><AddCourse /></PrivateRoute>} />
         <Route path="/manage-course" element={<PrivateRoute><ManageCourse /></PrivateRoute>} />
